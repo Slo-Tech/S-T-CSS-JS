@@ -1,0 +1,10 @@
+#page_content, #footer, #head {
+	margin:0 auto; width:49em; }
+
+#page_content {
+	width:53em; }
+
+#menu, #poll {
+	-moz-border-radius:8px; -webkit-border-radius:8px; /*border-left-width:1px;*/ }
+
+
