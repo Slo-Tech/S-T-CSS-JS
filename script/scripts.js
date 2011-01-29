@@ -294,6 +294,37 @@ $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
   updatePosts();
 });
 
+/* First post preview */
+
+function appendFirstpostInline(target, content) {
+    return $('<tr class="'+$(target).closest('tr').attr('class')+'"><td colspan="5"><div class="post">'+content+'</div></td></tr>').insertAfter($(target).closest('tr'));
+}
+
+function clickAppendFirstPost() {
+    var threadid = /\/t\d*/.exec($(this).next().find('h3 > a').attr('href'))
+    var updateurl = '/forum' + threadid[0] + '/check/';
+
+    $.ajax({
+      type: "GET",
+      url: updateurl,
+      dataType: 'jsonp',
+      data: {firstPost: true},
+      async: true,
+      cache: true,
+      context: this,
+      success: function(data) {
+          var newPost = appendFirstpostInline(this, data.newContent);
+          $(this).unbind('click');
+          $(this).click(function() {
+              $(newPost).remove();
+              $(this).unbind('click');
+              $(this).click(clickAppendFirstPost);
+          });
+      }
+    });
+};
+$('tr > td.icon').click(clickAppendFirstPost);
+
 /* AJAX quickpost */
 
 $('#form_quick_reply').submit(function() {
