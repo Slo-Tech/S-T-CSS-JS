@@ -70,8 +70,7 @@ $(document).ready(function(){
     };
   });
   
-  $('span.ajaxcheck').livequery(function(){
-    $(this).click(function(){ 
+  $('span.ajaxcheck').live('click', function(){
       var url = $(this).find('a').get(0).href + '&ajax=1';
       var checkbox = $(this).find('input').get(0);
       var anchor = $(this).find('a').get(0);
@@ -86,11 +85,10 @@ $(document).ready(function(){
         anchor.href = response.link.replace(/&amp;/g, '&') + '&ajax=1';
       });      
       return false;
-    });
   });
   
   
-  $('a.ajaxlink').livequery('click', function(event){
+  $('a.ajaxlink').live('click', function(event){
       var url = $(this).get(0).href + '&ajax=1';
       var div = $(this).parents('div.post');
       
@@ -177,24 +175,18 @@ $("input[name='check_showzbrisana']").next().click(function() {
 });
 
 /* editing of images */
-$('.image > .data > p.editable').livequery(function() {
-  $(this).editable({
-    cancel:'Prekliči',
-    submit:'Shrani',
-    onSubmit: function(content) {
-  	var imageid = /\d+/.exec($(this).parent().prev().attr('href'))[0];
-
-      var updateurl = '/galerija/' +imageid + '/uredi';
-
-      $.post(updateurl,
-              {'naslovSlike':content.current},
-              function(data){
-              })             
-    }
-  });
-});
-
-
+function editableImages(selector) {
+    $(selector).find('.image > .data > p.editable').editable({
+        cancel:'Prekli\u010Di',
+        submit:'Shrani',
+        onSubmit: function(content) {
+            var imageid = /\d+/.exec($(this).parent().prev().attr('href'))[0];
+            var updateurl = '/galerija/' +imageid + '/uredi';
+            $.post(updateurl, {'naslovSlike':content.current})
+        }
+    });
+};
+editableImages($('#content'));
 
 /* inline edit of posts for moderators */
 
@@ -217,7 +209,7 @@ function attachInlineEdit(postdiv) {
   ans.find('a:contains("popravi")').click(function() {
     jQuery.get(rawurl, function(data) {
       var savedhtml = $(content).html();
-      $(content).html('<textarea style="width:100%;" rows="5">'+data+'</textarea>').append('<div style="text-align: right;"><a href="'+urediurl+'">polni popravi</a> <input type="submit" value="shrani" class="submit send save-inlineedit" accesskey="S" name="akcija"/> <input type="submit" value="prekliči" class="submit send cancel-inlineedit" accesskey="P" name="akcija"/> </div>');
+      $(content).html('<textarea style="width:100%;" rows="5">'+data+'</textarea>').append('<div style="text-align: right;"><a href="'+urediurl+'">polni popravi</a> <input type="submit" value="shrani" class="submit send save-inlineedit" accesskey="S" name="akcija"/> <input type="submit" value="prekli&#269;i" class="submit send cancel-inlineedit" accesskey="P" name="akcija"/> </div>');
       $(content).find('textarea').TextAreaResizer();
 
       $(content).find('.save-inlineedit').click(function() {
@@ -254,12 +246,12 @@ function attachInlineEdit(postdiv) {
   /* .inline-uredi.click */
 };
 
-$('.post').livequery(function(index) {
+$('.post').each(function(index) {
   attachInlineEdit(this);
 });
 
 /* live feed FTW */
-feedUpdateInterval = 100000;
+feedUpdateInterval = 10000;
 updatelock = false;
 
 function updatePosts() {
@@ -276,8 +268,12 @@ function updatePosts() {
       async: true,
       success: function(response) {
         if (typeof response.newContent != 'undefined') {        
-          $('.post:last').after(response.newContent); //.hide().fadeIn('slow');
-          
+          var newPosts = $('.post:last').after(response.newContent); //.hide().fadeIn('slow');
+          newPosts.nextAll().andSelf().each(function(index) {
+            attachInlineEdit(this);
+            editableImages(this);
+          });
+
           feedUpdateInterval = 10000;
         } else {
           if (feedUpdateInterval < 30000) {

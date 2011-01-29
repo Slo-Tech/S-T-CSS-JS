@@ -1,43 +1,3 @@
-/* some all-round useful functions */
-	
-	/**
-	 * make an "ajax" request
-	 *
-	 * @param url			url to call
-	 * @param myFunction	function to execute with one argument - response text
-	 */
-	function request(url, myFunction)
-	{
-		if(XMLHttpRequest)
-		{
-			var xmlhttp =  new XMLHttpRequest();
-		}
-		else if(ActiveXObject)
-		{
-			var xmlhttp =  new ActiveXObject('Microsoft.XMLHTTP');
-		}
-		else
-		{
-			return false;
-		}
-		
-		
-		xmlhttp.open('GET', url, true);
-		xmlhttp.onreadystatechange = function()
-		{
-			if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
-			{
-				myFunction(xmlhttp.responseText);
-			}
-		}
-		xmlhttp.send(null);
-	}
-	
-	/**
-	 * adds a function to the onload event handler
-	 *
-	 * @param func			function to add
-	 */
 	function onLoad(func)
 	{
 		if(window.addEventListener)
@@ -49,6 +9,14 @@
 			window.attachEvent('onload', func);
 		}
 	}
+
+
+/* some all-round useful functions */
+	/**
+	 * adds a function to the onload event handler
+	 *
+	 * @param func			function to add
+	 */
 	
 	/**
 	 * document.getElementById() shortcut
@@ -87,103 +55,7 @@
 			elArray[i].exec();
 		}
 	}
-	
-	
-/* establish some functions to work with cookies */
-var cookies = 
-{
-	/**
-	 * creates a cookie
-	 * 
-	 * @param name		cookie name
-	 * @param value		cookie value
-	 */
-	create : function(name, value)
-	{
-		document.cookie = name + "=" + value + "; path=/";
-	},
-	
-	/**
-	 * reads a cookie
-	 * 
-	 * @param name		cookie name
-	 */
-	read : function(name)
-	{
-		var nameEQ 	= name + "=";
-		var ca 		= document.cookie.split(';');
-		
-		for(var i = 0; i < ca.length; i++ )
-		{
-			var c = ca[i];
-			while (c.charAt(0) == ' ')
-			{
-				c = c.substring(1,c.length);
-			}
-			if (c.indexOf(nameEQ) == 0)
-			{
-				return c.substring(nameEQ.length,c.length);
-			}
-		}
-		return null;
-	},
-	
-	/**
-	 * deletes a cookie
-	 * 
-	 * @param name		cookie name
-	 */
-	remove : function(name)
-	{
-		document.cookie = name + "=; expires=" + ( new Date().toGMTString() ) + "; path=/";
-	}
-}
 
-	
-/* working with keystrokes */
-var key =
-{
-	which : function(e)
-	{
-		if(document.all)
-		{
-			return window.event.keyCode;
-		}
-		else
-		{
-			return e.which;
-		}
-	},
-	
-	ENTER : 13,
-	ESC : 27,
-	KEYUP : 38,
-	KEYDN : 40,
-	
-	target : function(e)
-	{
-		var targ;
-		if(!e)
-		{
-			var e = window.event;
-		}
-		if(e.target)
-		{
-			targ = e.target;
-		}
-		else if(e.srcElement)
-		{
-			targ = e.srcElement;
-		}
-		if(targ.nodeType == 3) // defeat Safari bug
-		{
-			targ = targ.parentNode;
-		}
-		return targ;
-	}
-}
-
-	
 
 /**
  * some function to help with the dom
@@ -391,77 +263,6 @@ var freshNews =
 };
 onLoad(freshNews.prepare);
 
-
-/* forum settings
-	load[load.length] = function()
-	{
-		var settingsField = _('settings');
-		if(settingsField)
-		{
-			var settingsInputs = settingsField.getElementsByTagName('INPUT');
-			for(var i = 0; i < settingsInputs.length; i++)
-			{
-				var curInput = settingsInputs[i];
-				if(curInput.type = 'checkbox')
-				{
-					curInput.onclick = function()
-					{
-						var checked = this.checked;
-						//alert('TODO: ajax! (' + this.name + '=' + checked + ')');
-					}
-					nextElement(curInput).onclick = function()
-					{
-						var checkbox = this.parentNode.getElementsByTagName('INPUT')[0];
-						checkbox.checked = !checkbox.checked;
-						
-						var checked = checkbox.checked;
-						//alert('TODO: ajax! (' + checkbox.name + '=' + checked + ')');
-						
-						return false;
-					}
-				}
-			}
-		}
-	}
-	
- */
-
-/* disabled items */
-onLoad(function()
-	{
-		var fieldset = _('search_fieldset');
-		if(fieldset)
-		{
-			forAll(fieldset, 'input', function()
-				{
-					if(this.type == 'checkbox')
-					{
-						var selectBox;
-						if(selectBox = this.parentNode.parentNode.getElementsByTagName('SELECT')[0])
-						{
-							if(!this.checked)
-							{
-								selectBox.disabled = true;
-							}
-							this.onchange = function()
-							{
-								if(this.checked)
-								{
-									this.parentNode.parentNode.getElementsByTagName('SELECT')[0].disabled = false;
-								}
-								else
-								{
-									this.parentNode.parentNode.getElementsByTagName('SELECT')[0].disabled = true;
-								}
-							}
-						}
-					}
-				}
-			);
-		}
-	}
-);
-
 /* controls (spremeni, brisi, ...) */
 var controls =
 {
@@ -553,53 +354,5 @@ var controls =
 			window.clearTimeout(controls.to);
 		}
 	}
-	
-	/*write :
-	{
-		buttons : function()
-		{
-			var newDiv = document.createElement('div');
-			newDiv.className = 'buttons';
-			
-			var buttonsEnabled = controls.write.buttonsEnabled;
-			var buttonsEnabledLength = buttonsEnabled.length;
-			var i, a;
-			
-			for(i = 0; i < buttonsEnabledLength; i++)
-			{
-				if(buttonsEnabled[i])
-				{
-					a = document.createElement('a');
-					a.href = '#';
-					a.className = buttonsEnabled[i][0];
-					a.innerHTML = buttonsEnabled[i][1];
-					a.title = buttonsEnabled[i][2];
-					newDiv.appendChild(a);
-				}
-				else
-				{
-					a = document.createElement('div');
-					a.className = 'separator';
-					newDiv.appendChild(a);
-				}
-			}
-			
-			a = document.createElement('div');
-			a.className = 'clear';
-			newDiv.appendChild(a);
-			
-			return newDiv;
-		},
-		
-		buttonsEnabled :
-		[
-			['B', 'B', 'Odebeljeno'],
-			['U', 'U', 'Pod&269;rtano'],
-			['I', 'I', 'Kurzivno'],
-			null,
-			['quote', '<span>&ldquo;</span>', 'Citat'],
-			['code', '#', 'Koda']
-		]
-	}*/
 }
 onLoad(controls.prepare);
