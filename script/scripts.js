@@ -349,12 +349,12 @@ $('#form_quick_reply').submit(function() {
 });
 
 $("div#content").find("p.read_more").each(function(index) {
-        var url = "http://slo-tech.com" + $(this).find("a").attr("href") + "/complete";
+                var url = (("https:" == document.location.protocol) ? "https://" : "http://") + "slo-tech.com" + $(this).find("a").attr("href") + "/complete";
         var poster = $(this).parent().find("div.image");
         var wrapper = $(this).parent().find("div.besediloNovice");
         $(this).find("a").click(function() {
                 var a = $(this);
-                $.get(url, function(html) {
+                $.ajax({url:url, cache:true, dataType: 'html', success: function(html) {
                         var from = html.indexOf('<div class="besediloNovice">');
                         var to   = html.indexOf('<p class="comments">');
                         var full = html.substring(from, to);
@@ -362,7 +362,8 @@ $("div#content").find("p.read_more").each(function(index) {
                         $(poster).toggle();
 
                         $(wrapper).html(full);
-                        $(a).unbind('click');
+                        $(a).remove();
+                }
                 });
                 return false;
         });
