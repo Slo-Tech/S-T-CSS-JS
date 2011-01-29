@@ -294,8 +294,28 @@ $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
   updatePosts();
 });
 
-/* First post preview */
+/* Show more news */
+if ($('.news_item:last').length != 0) {
+    $('.news_item:last').html('<input type="submit" value="Prika\u017Ei starej\u0161e novice" class="submit">').click(function() {
+        var threadid = /\/t\d*/.exec($(this).prev().find('header a:first').attr('href'));
+        var updateurl = '/forum' + threadid[0] + '/check/';
+        
+        $.ajax({
+          type: "GET",
+          url: updateurl,
+          dataType: 'html',
+          data: {firstPost: true},
+          async: true,
+          cache: true,
+          context: this,
+          success: function(html) {
+                $(this).before(html);
+          }
+        });
+    });
+};
 
+/* First post preview */
 function appendFirstpostInline(target, content) {
     return $('<tr class="'+$(target).closest('tr').attr('class')+'"><td colspan="5"><div class="post">'+content+'</div></td></tr>').insertAfter($(target).closest('tr'));
 }
