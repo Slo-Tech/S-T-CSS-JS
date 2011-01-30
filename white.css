@@ -496,31 +496,33 @@ ins {
 	background-color: yellow; padding: 0.5em;
 }
 
-#lightbox{
-	background-color:#eee;
+#lightbox {
+	background-color: #eee;
 	padding: 10px;
-	border-bottom: 2px solid #666;
-	border-right: 2px solid #666;
-	}
-#lightboxDetails{
-	font-size: 0.8em;
-	padding-top: 0.4em;
-	}	
-#lightboxCaption{ float: left; }
-#keyboardMsg{ float: right; }
-#closeButton{ top: 5px; right: 5px; }
-
-#lightbox img{ border: none; clear: both;} 
-#overlay img{ border: none; }
-
-#overlay{ background-image: url(overlay.png); }
-
-* html #overlay{
-	background-color: #333;
-	back\ground-color: transparent;
-	background-image: url(blank.gif);
-	}
-	
+	border-bottom: 1px solid #666;
+	border-right: 1px solid #666;
+}
+#lightboxCaption {
+	color: #333;
+	background-color: #eee;
+	font-size: 90%;
+	text-align: center;
+	border-bottom: 1px solid #666;
+	border-right: 1px solid #666;
+}
+#lightboxIndicator {
+	border: 1px solid white;
+}
+#lightboxOverallView,
+#overlay {
+	background-color: #000;
+	opacity: 0.5;
+}
+* html #lightboxOverallView,
+* html #overlay {
+	background-color: #000;
+	filter: Alpha(opacity=50);
+}
 
 #fixed_link {font-size:1em;}
 #fixed_link  {padding:0; margin:0; right:-12.6em;}
