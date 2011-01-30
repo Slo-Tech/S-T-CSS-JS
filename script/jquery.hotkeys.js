@@ -45,7 +45,6 @@
 	
 		handleObj.handler = function( event ) {
 			// Don't fire in text-accepting inputs that we didn't directly bind to
-			console.log(event.target.type);
 			/* slo-tech modification to also check for type === search */
 			if ( this !== event.target && (/textarea|select/i.test( event.target.nodeName ) ||
 				 event.target.type === "text" || event.target.type === "search") ) {
