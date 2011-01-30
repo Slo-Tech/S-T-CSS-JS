@@ -9,5 +9,6 @@ document.write("<script src='http://st.fey/script/jquery.hoverIntent.js'><\/scri
 document.write("<script src='http://st.fey/script/jquery.form.js'><\/script>");
 document.write("<script src='http://st.fey/script/jquery.cookie.js'><\/script>");
 document.write("<script src='http://st.fey/script/jquery.textarearesizer.js'><\/script>");
+document.write("<script src='http://st.fey/script/jquery.hotkeys.js'><\/script>");
 
 document.write("<script src='http://st.fey/script/scripts.js'><\/script>");

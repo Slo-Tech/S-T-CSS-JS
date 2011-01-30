@@ -413,5 +413,10 @@ $('div#menus ul#poll').each(function(index, poll) {
 	});
 });
 
+/* Hotkeys */
 
+$(document).bind('keydown', 'l', function() {window.location = $('li.next a').attr('href');});
+$(document).bind('keydown', 'right', function() {window.location = $('li.next a').attr('href');});
+$(document).bind('keydown', 'h', function() {window.location = $('li.prev a').attr('href');});
+$(document).bind('keydown', 'left', function() {window.location = $('li.prev a').attr('href');});
 });
