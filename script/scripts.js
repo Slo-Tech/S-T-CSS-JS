@@ -307,7 +307,9 @@ if ($('.news_item.history').length != 0) {
           cache: true,
           context: this,
           success: function(html) {
-		$(html).insertBefore(this).find("a[rel^='lightbox']").prettyPhoto();
+              var content = $(html).insertBefore(this);
+              content.find("a[rel^='lightbox']").prettyPhoto();
+              applyReadMore(content);
           }
         });
     });
@@ -366,24 +368,27 @@ $('#form_quick_reply').submit(function() {
   return false;
 });
 
-$("div#content").find("p.read_more").each(function(index) {
-                var url = (("https:" == document.location.protocol) ? "https://" : "http://") + "slo-tech.com" + $(this).find("a").attr("href") + "/complete";
-        var wrapper = $(this).parent().find("div.besediloNovice");
-        $(this).find("a").click(function() {
-                var a = $(this);
-                $.ajax({url:url, cache:true, dataType: 'html', success: function(html) {
-                        var from = html.indexOf('<div class="besediloNovice">');
-                        var to   = html.indexOf('<p class="comments">');
-                        var full = html.substring(from, to);
+function applyReadMore(selector) {
+    $(selector).find("p.read_more").each(function(index) {
+                    var url = (("https:" == document.location.protocol) ? "https://" : "http://") + "slo-tech.com" + $(this).find("a").attr("href") + "/complete";
+            var wrapper = $(this).parent().find("div.besediloNovice");
+            $(this).find("a").click(function() {
+                    var a = $(this);
+                    $.ajax({url:url, cache:true, dataType: 'html', success: function(html) {
+                            var from = html.indexOf('<div class="besediloNovice">');
+                            var to   = html.indexOf('<p class="comments">');
+                            var full = html.substring(from, to);
 
-                        $(wrapper).html(full);
-                        $(a).remove();
-                }
-                });
-                return false;
-        });
+                            $(wrapper).html(full);
+                            $(a).remove();
+                    }
+                    });
+                    return false;
+            });
 
-});
+    });
+};
+applyReadMore('div#content');
 
 $('div#menus ul#poll').each(function(index, poll) {
 	var form = $(poll).find('form');
