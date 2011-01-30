@@ -419,4 +419,18 @@ $(document).bind('keydown', 'l', function() {window.location = $('li.next a').at
 $(document).bind('keydown', 'right', function() {window.location = $('li.next a').attr('href');});
 $(document).bind('keydown', 'h', function() {window.location = $('li.prev a').attr('href');});
 $(document).bind('keydown', 'left', function() {window.location = $('li.prev a').attr('href');});
+
+jQuery.extend(jQuery.expr[':'], {
+    focus: function(element) { 
+        return element == document.activeElement; 
+    }
+});
+$(document).bind('keydown', '/', function() {
+        if ($('input.text[name=q]').is(':focus')) {
+            return true;
+        } else {
+            $('input.text[name=q]').focus();
+            return false;
+        }
+});
 });
