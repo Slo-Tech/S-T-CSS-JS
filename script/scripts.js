@@ -297,14 +297,13 @@ $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
 /* Show more news */
 if ($('.history').length != 0) {
     $('.history').html('<input type="submit" value="Prika\u017Ei starej\u0161e novice" class="submit">').click(function() {
-        var threadid = /\/t\d*/.exec($(this).prev().find('header a:first').attr('href'));
-        var updateurl = '/forum' + threadid[0] + '/check/';
-        
+        var threadid = /\/t(\d*)/.exec($(this).prev().find('header a:first').attr('href'));
+
         $.ajax({
-          type: "GET",
-          url: updateurl,
+          type: "POST",
+          url: '/novice/front-more',
           dataType: 'html',
-          data: {firstPost: true},
+          data: {lastID: threadid[0] },
           async: true,
           cache: true,
           context: this,
