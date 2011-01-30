@@ -425,12 +425,17 @@ jQuery.extend(jQuery.expr[':'], {
         return element == document.activeElement; 
     }
 });
-$(document).bind('keydown', '/', function() {
+
+function searchFocus(evt) {
         if ($('input.text[name=q]').is(':focus')) {
             return true;
         } else {
             $('input.text[name=q]').focus();
             return false;
         }
-});
+};
+
+$(document).bind('keydown', '/', searchFocus);
+$(document).bind('keydown', 'Shift+7', searchFocus);
+
 });
