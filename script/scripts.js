@@ -370,7 +370,6 @@ $('#form_quick_reply').submit(function() {
 
 $("div#content").find("p.read_more").each(function(index) {
                 var url = (("https:" == document.location.protocol) ? "https://" : "http://") + "slo-tech.com" + $(this).find("a").attr("href") + "/complete";
-        var poster = $(this).parent().find("div.image");
         var wrapper = $(this).parent().find("div.besediloNovice");
         $(this).find("a").click(function() {
                 var a = $(this);
@@ -378,8 +377,6 @@ $("div#content").find("p.read_more").each(function(index) {
                         var from = html.indexOf('<div class="besediloNovice">');
                         var to   = html.indexOf('<p class="comments">');
                         var full = html.substring(from, to);
-
-                        $(poster).toggle();
 
                         $(wrapper).html(full);
                         $(a).remove();

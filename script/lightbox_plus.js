@@ -1,190 +1,3 @@
-// spica javascript libraries - spica.js -- version 0.05
-// == written by Takuya Otani <takuya.otani@gmail.com> ===
-// == Copyright (C) 2006 SimpleBoxes/SerendipityNZ Ltd. ==
-
-// === array ===
-if (!Array.prototype.pop)
-{
-	Array.prototype.pop = function()
-	{
-		if (!this.length) return null;
-		var last = this[this.length - 1];
-		--this.length;
-		return last;
-	}
-}
-if (!Array.prototype.push)
-{
-	Array.prototype.push = function()
-	{
-		for (var i=0,n=arguments.length;i<n;i++)
-			this[this.length] = arguments[i];
-		return this.length;
-	}
-}
-if (!Array.prototype.indexOf)
-{
-	Array.prototype.indexOf = function(value,idx)
-	{
-		if (typeof(idx) != 'number') idx = 0;
-		else if (idx < 0) idx = this.length + idx;
-		for (var i=idx,n=this.length;i<n;i++)
-			if (this[i] === value) return i;
-		return -1;
-	}
-}
-// === browser ===
-function Browser()
-{
-	this.name = navigator.userAgent;
-	this.isWinIE = this.isMacIE = false;
-	this.isGecko = this.name.match(/Gecko\//);
-	this.isSafari = this.name.match(/AppleWebKit/);
-	this.isKHTML = this.isSafari || navigator.appVersion.match(/Konqueror|KHTML/);
-	this.isOpera = window.opera;
-	this.hasNS = (document.documentElement) ? document.documentElement.namespaceURI : null;
-	if (document.all && !this.isGecko && !this.isSafari && !this.isOpera)
-	{
-		this.isWinIE = this.name.match(/Win/);
-		this.isMacIE = this.name.match(/Mac/);
-	}
-}
-var Browser = new Browser();
-// === event ===
-if (!window.Event) var Event = new Object;
-Event = {
-	cache : false,
-	getEvent : function(evnt)
-	{
-		return (evnt) ? evnt : ((window.event) ? window.event : null);
-	},
-	getKey : function(evnt)
-	{
-		evnt = this.getEvent(evnt);
-		return (evnt.which) ? evnt.which : evnt.keyCode;
-	},
-	stop : function(evnt)
-	{
-		try{ evnt.stopPropagation() } catch(err){};
-		evnt.cancelBubble = true;
-		try{ evnt.preventDefault() } catch(err){};
-		return (evnt.returnValue = false);
-	},
-	register : function(object, type, handler)
-	{
-		if (type == 'keypress' && (Browser.isKHTML || object.attachEvent)) type = 'keydown';
-		if (type == 'mousewheel' && Browser.isGecko) type = 'DOMMouseScroll';
-		if (!this.cache) this.cache = [];
-		if (object.addEventListener)
-		{
-			this.cache.push([object,type,handler]);
-			object.addEventListener(type, handler, false);
-		}
-		else if (object.attachEvent)
-		{
-			this.cache.push([object,type,handler]);
-			object.attachEvent(['on',type].join(''),handler);
-		}
-		else
-		{
-			object[['on',type].join('')] = handler;
-		}
-	},
-	deregister : function(object, type, handler)
-	{
-		if (type == 'keypress' && (Browser.isKHTML || object.attachEvent)) type = 'keydown';
-		if (type == 'mousewheel' && Browser.isGecko) type = 'DOMMouseScroll';
-		if (object.removeEventListener)
-			object.removeEventListener(type, handler, false);
-		else if (object.detachEvent)
-			object.detachEvent(['on',type].join(''), handler);
-		else
-			object[['on',type].join('')] = null;
-	},
-	deregisterAll : function()
-	{
-		if (!Event.cache) return
-		for (var i=0,n=Event.cache.length;i<n;i++)
-		{
-			Event.deregister(Event.cache[i]);
-			Event.cache[i][0] = null;
-		}
-		Event.cache = false;
-	}
-};
-Event.register(window, 'unload', Event.deregisterAll);
-// === dom ===
-document.getElemetsByClassName = function(name,target)
-{
-	var result = [];
-	var object  = null;
-	var search = new RegExp(['(^|\\s)',name,'(\\s|$)'].join(''));
-	if (target && target.getElementsByTagName)
-		object = target.getElementsByTagName('*');
-	if (!object)
-		object = document.getElementsByTagName ? document.getElementsByTagName('*') : document.all;
-	for (var i=0,n=object.length;i<n;i++)
-	{
-		var check = object[i].getAttribute('class') || object[i].className;
-		if (check.match(search)) result.push(object[i]);
-	}
-	return result;
-}
-// === library ===
-function Library()
-{
-	this._path = '';
-	this._cache = [];
-	this.lang = '';
-	this.base = '';
-	return this._init();
-}
-Library.prototype = {
-	_init : function()
-	{
-		var rs_path = document.getElementsByName('X-Resource-Dir')[0];
-		var js_path = document.getElementsByName('X-Script-Dir')[0];
-		if (rs_path)
-		{
-			this.base = this._check_path(rs_path.getAttribute('content'));
-			if (!js_path) this._path = [this.base,'js/'].join('');
-		}
-		if (js_path)
-			this._path = this._check_path(js_path.getAttribute('content'));
-		return this;
-	},
-	_initLang : function()
-	{
-		var html = document.getElementsByTagName('html')[0];
-		if (!html) return;
-		this.lang = html.getAttribute('xml:lang') || html.getAttribute('lang');
-	},
-	_check_path : function(path)
-	{
-		if (!path) return '';
-		if (!path.match(/\/$/)) path = [path,'/'].join('');
-		return path;
-	},
-	require : function(libs)
-	{
-		var pre  = '\n<script type="text/javascript" src="';
-		var post = '.js"></script>';
-		for (var i=0,n=libs.length;i<n;i++)
-		{
-			if (this._cache.indexOf(libs[i]) > -1) continue;
-			document.write([pre,this._path,libs[i],post].join(''));
-			this._cache.push(libs[i]);
-		}
-	},
-	path : function(path)
-	{
-		this._path = this._check_path(path);
-	}
-}
-var Library = new Library();
-Event.register(window,'load',function() { Library._initLang() });
-
-
 // lightbox_plus.js
 // == written by Takuya Otani <takuya.otani@gmail.com> ===
 // == Copyright (C) 2006 SimpleBoxes/SerendipityNZ Ltd. ==
@@ -203,80 +16,207 @@ Event.register(window,'load',function() { Library._initLang() });
 	For more information on this script, visit:
 	http://huddletogether.com/projects/lightbox/
 */
-// ver. 20061027 - fixed a bug ( not work at xhml documents on Netscape7 )
-// ver. 20061026 - fixed bugs
-// ver. 20061010 - implemented image set feature
-// ver. 20060921 - fixed a bug / added overall view
-// ver. 20060920 - added flag to prevent mouse wheel event
-// ver. 20060919 - fixed a bug
-// ver. 20060918 - implemented functionality of wheel zoom & drag'n drop
-// ver. 20060131 - fixed a bug to work correctly on Internet Explorer for Windows
-// ver. 20060128 - implemented functionality of echoic word
-// ver. 20060120 - implemented functionality of caption and close button
+// === elements ===
+document.getElemetsByClassName = function(name,target)
+{
+	var result = [];
+	var object  = null;
+	var search = new RegExp(['(^|\\s)',name,'(\\s|$)'].join(''));
+	if (target && target.getElementsByTagName)
+		object = target.getElementsByTagName('*');
+	if (!object)
+		object = document.getElementsByTagName ? document.getElementsByTagName('*') : document.all;
+	for (var i=0,n=object.length;i<n;i++)
+	{
+		var check = object[i].getAttribute('class') || object[i].className;
+		if (check.match(search)) result.push(object[i]);
+	}
+	return result;
+}
+// === window ===
 function WindowSize()
 { // window size object
 	this.w = 0;
 	this.h = 0;
-	return this.update();
+	return this;
 }
 WindowSize.prototype.update = function()
 {
 	var d = document;
-	this.w = 
+	var w = 
 	  (window.innerWidth) ? window.innerWidth
 	: (d.documentElement && d.documentElement.clientWidth) ? d.documentElement.clientWidth
 	: d.body.clientWidth;
-	this.h = 
+	var h = 
 	  (window.innerHeight) ? window.innerHeight
 	: (d.documentElement && d.documentElement.clientHeight) ? d.documentElement.clientHeight
 	: d.body.clientHeight;
-	return this;
+	if (w != this.w || h != this.h)
+	{
+		this.w = w;
+		this.h = h;
+		return true;
+	}
+	return false;
 };
 function PageSize()
 { // page size object
 	this.win = new WindowSize();
 	this.w = 0;
 	this.h = 0;
-	return this.update();
+	return this;
 }
 PageSize.prototype.update = function()
 {
 	var d = document;
-	this.w = 
+	var w = 
 	  (window.innerWidth && window.scrollMaxX) ? window.innerWidth + window.scrollMaxX
 	: (d.body.scrollWidth > d.body.offsetWidth) ? d.body.scrollWidth
 	: d.body.offsetWidt;
-	this.h = 
+	var h = 
 	  (window.innerHeight && window.scrollMaxY) ? window.innerHeight + window.scrollMaxY
 	: (d.body.scrollHeight > d.body.offsetHeight) ? d.body.scrollHeight
 	: d.body.offsetHeight;
-	this.win.update();
-	if (this.w < this.win.w) this.w = this.win.w;
-	if (this.h < this.win.h) this.h = this.win.h;
-	return this;
+	var updated = this.win.update();
+	if (w < this.win.w) w = this.win.w;
+	if (h < this.win.h) h = this.win.h;
+	if (updated || w != this.w || h != this.h)
+	{
+		this.w = w;
+		this.h = h;
+		return true;
+	}
+	return false;
 };
 function PagePos()
 { // page position object
 	this.x = 0;
 	this.y = 0;
-	return this.update();
+	return this;
 }
 PagePos.prototype.update = function()
 {
 	var d = document;
-	this.x =
+	var x =
 	  (window.pageXOffset) ? window.pageXOffset
 	: (d.documentElement && d.documentElement.scrollLeft) ? d.documentElement.scrollLeft
 	: (d.body) ? d.body.scrollLeft
 	: 0;
-	this.y =
+	var y =
 	  (window.pageYOffset) ? window.pageYOffset
 	: (d.documentElement && d.documentElement.scrollTop) ? d.documentElement.scrollTop
 	: (d.body) ? d.body.scrollTop
 	: 0;
-	return this;
+	if (x != this.x || y != this.y)
+	{
+		this.x = x;
+		this.y = y;
+		return true;
+	}
+	return false;
 };
-function LightBox(option)
+// === browser ===
+if ( !window.Spica )
+{
+	var Spica = {};
+	Spica.Browser = new function()
+	{
+		this.name = navigator.userAgent;
+		this.isWinIE = this.isMacIE = false;
+		this.isGecko = this.name.match(/Gecko\//);
+		this.isSafari = this.name.match(/AppleWebKit/);
+		this.isSafari3 = (this.name.match(/AppleWebKit\/(\d\d\d)/) && parseInt(RegExp.$1) > 500);
+		this.isKHTML = this.isSafari || navigator.appVersion.match(/Konqueror|KHTML/);
+		this.isOpera = window.opera;
+		if (document.all && !this.isGecko && !this.isSafari && !this.isOpera)
+		{
+			this.isWinIE = this.name.match(/Win/);
+			this.isMacIE = this.name.match(/Mac/);
+			this.isNewIE = (this.name.match(/MSIE (\d\.\d)/) && RegExp.$1 > 6.5);
+		}
+	};
+	Spica.Event = {
+		cache : false,
+		getEvent : function(evnt)
+		{
+			return (evnt) ? evnt : ((window.event) ? window.event : null);
+		},
+		getKey : function(evnt)
+		{
+			if (!evnt) return; // do nothing
+			return (evnt.keyCode) ? evnt.keyCode : evnt.charCode;
+		},
+		stop : function(evnt)
+		{
+			if (!evnt) return; // do nothing
+			try
+			{
+				evnt.stopPropagation();
+			}
+			catch(err) {};
+			evnt.cancelBubble = true;
+			try
+			{
+				evnt.preventDefault();
+			}
+			catch(err) {};
+			return (evnt.returnValue = false);
+		},
+		register : function(object, type, handler)
+		{
+			if (!object) return;
+			if (type == 'keypress' && !object.addEventListener) type = 'keydown';
+			if (type == 'mousewheel' && Spica.Browser.isGecko) type = 'DOMMouseScroll';
+			if (!this.cache) this.cache = [];
+			if (object.addEventListener)
+			{
+				this.cache.push([object,type,handler]);
+				object.addEventListener(type, handler, false);
+			}
+			else if (object.attachEvent)
+			{
+				this.cache.push([object,type,handler]);
+				object.attachEvent('on' + type,handler);
+			}
+			else
+			{
+				object['on' + type] = handler;
+			}
+		},
+		deregister : function(object, type, handler)
+		{
+			if (!object) return;
+			if (type == 'keypress' && !object.addEventListener) type = 'keydown';
+			if (type == 'mousewheel' && Spica.Browser.isGecko) type = 'DOMMouseScroll';
+			if (object.removeEventListener)
+				object.removeEventListener(type, handler, false);
+			else if (object.detachEvent)
+				object.detachEvent('on' + type, handler);
+			else
+				object['on' + type] = null;
+		},
+		deregisterAll : function()
+		{
+			if (!Spica.Event.cache) return
+			for (var i=0,n=Spica.Event.cache.length;i<n;i++)
+			{
+				Spica.Event.deregister(Spica.Event.cache[i]);
+				Spica.Event.cache[i][0] = null;
+			}
+			Spica.Event.cache = false;
+		},
+		run : function(func)
+		{
+			if (typeof func != 'function') return;
+			(Spica.Browser.isGecko || Spica.Browser.isOpera)
+				? this.register(window,'DOMContentLoaded',func)
+				: this.register(window,'load',func);
+		}
+	};
+	Spica.Event.register(window, 'unload', Spica.Event.deregisterAll);
+} // end of if ( !window.Spica )
+// === lightbox ===
+function Lightbox(option)
 {
 	var self = this;
 	self._imgs = new Array();
@@ -297,8 +237,10 @@ function LightBox(option)
 	self._minpos = {x:0,y:0};
 	self._expand = option.expandimg;
 	self._shrink = option.shrinkimg;
+	self._blank = option.blankimg;
 	self._resizable = option.resizable;
 	self._timer = null;
+	self._anim = {step:0, w:50, h:50, a:0, t:0, f:option.animation};
 	self._indicator = null;
 	self._overall = null;
 	self._openedset = null;
@@ -306,15 +248,34 @@ function LightBox(option)
 	self._next = null;
 	self._hiding = [];
 	self._first = false;
+	self._changed = false;
+	self._actionEnabled = false;
 	return self._init(option);
 }
-LightBox.prototype = {
+Lightbox.prototype = {
+	refresh : function(target)
+	{
+		if (!target) target = document;
+		this._imgs.length = 0;
+		this._genListFromLinks(target);
+	},
 	_init : function(option)
 	{
 		var self = this;
 		var d = document;
 		if (!d.getElementsByTagName) return;
-		if (Browser.isMacIE) return self;
+		if (Spica.Browser.isMacIE) return self;
+		var body = d.getElementsByTagName("body")[0];
+		self._wrap = self._createWrapOn(body);
+		self._box  = self._createBoxOn(body,option);
+		self._img  = self._box.firstChild;
+		self._zoomimg = d.getElementById('actionImage');
+		if ( !option.skipInit ) self._genListFromLinks(d);
+		return self;
+	},
+	_genListFromLinks : function(d)
+	{
+		var self = this;
 		var links = d.getElementsByTagName("a");
 		for (var i=0;i<links.length;i++)
 		{
@@ -344,19 +305,13 @@ LightBox.prototype = {
 				self._sets[rel].push(num);
 			}
 		}
-		var body = d.getElementsByTagName("body")[0];
-		self._wrap = self._createWrapOn(body,option.loadingimg);
-		self._box  = self._createBoxOn(body,option);
-		self._img  = self._box.firstChild;
-		self._zoomimg = d.getElementById('actionImage');
-		return self;
 	},
 	_genOpener : function(num)
 	{
 		var self = this;
 		return function() { self._show(num); return false; }
 	},
-	_createWrapOn : function(obj,imagePath)
+	_createWrapOn : function(obj)
 	{
 		var self = this;
 		if (!obj) return null;
@@ -371,21 +326,8 @@ LightBox.prototype = {
 		wrap.style.zIndex = '50';
 		wrap.style.width = '100%';
 		wrap.style.height = '100%';
-		if (Browser.isWinIE) wrap.style.position = 'absolute';
-		Event.register(wrap,"click",function(evt) { self._close(evt); });
-		// create loading image, animated image
-		var imag = new Image;
-		imag.onload = function() {
-			var spin = document.createElement('img');
-			wrap.appendChild(spin);
-			spin.id = 'loadingImage';
-			spin.src = imag.src;
-			spin.style.position = 'relative';
-			self._set_cursor(spin);
-			Event.register(spin,'click',function(evt) { self._close(evt); });
-			imag.onload = function(){};
-		};
-		if (imagePath != '') imag.src = imagePath;
+		if (Spica.Browser.isWinIE) wrap.style.position = 'absolute';
+		Spica.Event.register(wrap,"click",function(evt) { self._close(evt); });
 		return wrap;
 	},
 	_createBoxOn : function(obj,option)
@@ -403,10 +345,26 @@ LightBox.prototype = {
 		var img = document.createElement('img');
 		box.appendChild(img);
 		img.id = 'lightboxImage';
+		img.width = 200;
+		img.height = 200;
 		self._set_cursor(img);
-		Event.register(img,'mouseover',function() { self._show_action(); });
-		Event.register(img,'mouseout',function() { self._hide_action(); });
-		Event.register(img,'click',function(evt) { self._close(evt); });
+		Spica.Event.register(img,'mouseover',function() { self._actionEnabled = true; self._show_action(); });
+		Spica.Event.register(img,'mouseout',function() { self._actionEnabled = false; self._hide_action(); });
+		Spica.Event.register(img,'click',function(evt) { self._close(evt); });
+		// create loading image, animated image
+		var imag = new Image;
+		imag.onload = function() {
+			var spin = document.createElement('img');
+			box.appendChild(spin);
+			spin.id = 'loadingImage';
+			spin.src = imag.src;
+			spin.style.position = 'absolute';
+			spin.style.zIndex = '70';
+			self._set_cursor(spin);
+			Spica.Event.register(spin,'click',function(evt) { self._close(evt); });
+			imag.onload = function(){};
+		};
+		if (option.loadingimg != '') imag.src = option.loadingimg;
 		// create hover navi - prev
 		if (option.previmg)
 		{
@@ -419,8 +377,8 @@ LightBox.prototype = {
 			prevLink.style.zIndex = '70';
 			prevLink.src = option.previmg;
 			self._prev = prevLink;
-			Event.register(prevLink,'mouseover',function() { self._show_action(); });
-			Event.register(prevLink,'click',function() { self._show_next(-1); });
+			Spica.Event.register(prevLink,'mouseover',function() { self._actionEnabled = true; self._show_action(); });
+			Spica.Event.register(prevLink,'click',function() { self._show_next(-1); });
 		}
 		// create hover navi - next
 		if (option.nextimg)
@@ -434,8 +392,8 @@ LightBox.prototype = {
 			nextLink.style.zIndex = '70';
 			nextLink.src = option.nextimg;
 			self._next = nextLink;
-			Event.register(nextLink,'mouseover',function() { self._show_action(); });
-			Event.register(nextLink,'click',function() { self._show_next(+1); });
+			Spica.Event.register(nextLink,'mouseover',function() { self._actionEnabled = true; self._show_action(); });
+			Spica.Event.register(nextLink,'click',function() { self._show_next(+1); });
 		}
 		// create zoom indicator
 		var zoom = document.createElement('img');
@@ -448,9 +406,8 @@ LightBox.prototype = {
 		zoom.style.zIndex = '70';
 		self._set_cursor(zoom);
 		zoom.src = self._expand;
-		Event.register(zoom,'mouseover',function() { self._show_action(); });
-		Event.register(zoom,'click', function() { self._zoom(); });
-		Event.register(window,'resize',function() { self._set_size(true); });
+		Spica.Event.register(zoom,'mouseover',function() { self._actionEnabled = true; self._show_action(); });
+		Spica.Event.register(zoom,'click', function() { self._zoom(); });
 		// create close button
 		if (option.closeimg)
 		{
@@ -464,7 +421,7 @@ LightBox.prototype = {
 			btn.style.zIndex = '80';
 			btn.src = option.closeimg;
 			self._set_cursor(btn);
-			Event.register(btn,'click',function(evt) { self._close(evt); });
+			Spica.Event.register(btn,'click',function(evt) { self._close(evt); });
 		}
 		// caption text
 		var caption = document.createElement('span');
@@ -495,7 +452,7 @@ LightBox.prototype = {
 			effectImg.style.top = [option.effectpos.y,'px'].join('');
 			effectImg.style.zIndex = '90';
 			self._set_cursor(effectImg);
-			Event.register(effectImg,'click',function() { effectImg.style.display = 'none'; });
+			Spica.Event.register(effectImg,'click',function() { effectImg.style.display = 'none'; });
 		};
 		if (option.effectimg != '') effect.src = option.effectimg;
 		if (self._resizable)
@@ -521,46 +478,62 @@ LightBox.prototype = {
 	{
 		var self = this;
 		if (self._open == -1) return;
-		var targ = { w:self._page.win.w - 30, h:self._page.win.h - 30 };
+		var heightmargin = 30;
+		var caption = document.getElementById('lightboxCaption');
+		if (caption)
+			heightmargin += caption.clientHeight || caption.offsetHeight;
+		var targ = { w:self._page.win.w - 30, h:self._page.win.h - heightmargin };
 		var zoom = { x:15, y:15 };
 		var navi = { p:9, n:9, y:0 };
 		if (!self._expanded)
 		{ // shrink image with the same aspect
 			var orig = { w:self._imgs[self._open].w, h:self._imgs[self._open].h };
+			if ( orig.w < 0 ) orig.w = self._img.width;
+			if ( orig.h < 0 ) orig.h = self._img.height;
 			var ratio = 1.0;
 			if ((orig.w >= targ.w || orig.h >= targ.h) && orig.h && orig.w)
 				ratio = ((targ.w / orig.w) < (targ.h / orig.h)) ? targ.w / orig.w : targ.h / orig.h;
-			self._img.width  = Math.floor(orig.w * ratio);
-			self._img.height = Math.floor(orig.h * ratio);
 			self._expandable = (ratio < 1.0) ? true : false;
+			self._anim.w = Math.floor(orig.w * ratio);
+			self._anim.h = Math.floor(orig.h * ratio);
 			if (self._resizable) self._expandable = true;
-			if (Browser.isWinIE) self._box.style.display = "block";
+			if (Spica.Browser.isWinIE) self._box.style.display = "block";
 			self._imgpos.x = self._pos.x + (targ.w - self._img.width) / 2;
 			self._imgpos.y = self._pos.y + (targ.h - self._img.height) / 2;
 			navi.y = Math.floor(self._img.height / 2) - 10;
-			self._show_caption(true);
 			self._show_overall(false);
+			var loading = document.getElementById('loadingImage');
+			if (loading)
+			{
+				loading.style.left = [(self._img.width - 30) / 2,'px'].join('');
+				loading.style.top  = [(self._img.height - 30) / 2,'px'].join('');
+			}
+			if (caption)
+			{
+				caption.style.top = [self._img.height + 10,'px'].join(''); // 10 is top margin of lightbox
+				caption.style.width = [self._img.width + 20,'px'].join(''); // 20 is total side margin of lightbox
+			}
 		}
 		else
 		{ // zoomed or actual sized image
 			var width  = parseInt(self._imgs[self._open].w * self._level);
 			var height = parseInt(self._imgs[self._open].h * self._level);
-			self._minpos.x = self._pos.x + targ.w - width;
-			self._minpos.y = self._pos.y + targ.h - height;
-			if (width <= targ.w)
-				self._imgpos.x = self._pos.x + (targ.w - width) / 2;
+			self._minpos.x = self._pos.x + targ.w - self._img.width;
+			self._minpos.y = self._pos.y + targ.h - self._img.height;
+			if (self._img.width <= targ.w)
+				self._imgpos.x = self._pos.x + (targ.w - self._img.width) / 2;
 			else
 			{
 				if (self._imgpos.x > self._pos.x) self._imgpos.x = self._pos.x;
 				else if (self._imgpos.x < self._minpos.x) self._imgpos.x = self._minpos.x;
 				zoom.x = 15 + self._pos.x - self._imgpos.x;
 				navi.p = self._pos.x - self._imgpos.x - 5;
-				navi.n = width - self._page.win.w + self._imgpos.x + 25;
-				if (Browser.isWinIE) navi.n -= 10;
+				navi.n = self._img.width - self._page.win.w + self._imgpos.x + 25;
+				if (Spica.Browser.isWinIE) navi.n -= 10;
 			}
-			if (height <= targ.h)
+			if (self._img.height <= targ.h)
 			{
-				self._imgpos.y = self._pos.y + (targ.h - height) / 2;
+				self._imgpos.y = self._pos.y + (targ.h - self._img.height) / 2;
 				navi.y = Math.floor(self._img.height / 2) - 10;
 			}
 			else
@@ -570,9 +543,8 @@ LightBox.prototype = {
 				zoom.y = 15 + self._pos.y - self._imgpos.y;
 				navi.y = Math.floor(targ.h / 2) - 10 + self._pos.y - self._imgpos.y;
 			}
-			self._img.width  = width;
-			self._img.height = height;
-			self._show_caption(false);
+			self._anim.w = width;
+			self._anim.h = height;
 			self._show_overall(true);
 		}
 		self._box.style.left = [self._imgpos.x,'px'].join('');
@@ -586,6 +558,7 @@ LightBox.prototype = {
 			self._next.style.right = [navi.n,'px'].join('');
 			self._prev.style.top = self._next.style.top = [navi.y,'px'].join('');
 		}
+		self._changed = true;
 	},
 	_show_overall : function(visible)
 	{
@@ -633,17 +606,8 @@ LightBox.prototype = {
 	{
 		var self = this;
 		if (self._open == -1) return;
-		self._page.update();
-		self._pos.update();
-		var spin = self._wrap.firstChild;
-		if (spin)
-		{
-			var top = (self._page.win.h - spin.height) / 2;
-			if (self._wrap.style.position == 'absolute') top += self._pos.y;
-			spin.style.top  = [top,'px'].join('');
-			spin.style.left = [(self._page.win.w - spin.width - 30) / 2,'px'].join('');
-		}
-		if (Browser.isWinIE)
+		if (!self._page.update() && !self._pos.update() && !self._changed) return;
+		if (Spica.Browser.isWinIE)
 		{
 			self._wrap.style.width  = [self._page.win.w,'px'].join('');
 			self._wrap.style.height = [self._page.win.h,'px'].join('');
@@ -654,7 +618,7 @@ LightBox.prototype = {
 	_set_cursor : function(obj)
 	{
 		var self = this;
-		if (Browser.isWinIE && !Browser.isNewIE) return;
+		if (Spica.Browser.isWinIE && !Spica.Browser.isNewIE) return;
 		obj.style.cursor = 'pointer';
 	},
 	_current_setindex : function()
@@ -677,16 +641,16 @@ LightBox.prototype = {
 	_show_action : function()
 	{
 		var self = this;
-		if (self._open == -1 || !self._expandable) return;
-		if (!self._zoomimg) return;
-		self._zoomimg.src = (self._expanded) ? self._shrink : self._expand;
-		self._zoomimg.style.display = 'inline';
+		if (self._open == -1) return;
 		var check = self._current_setindex();
 		if (check > -1)
 		{
 			if (check > 0) self._prev.style.display = 'inline';
 			if (check < self._get_setlength() - 1) self._next.style.display = 'inline';
 		}
+		if (!self._expandable || !self._zoomimg) return;
+		self._zoomimg.src = (self._expanded) ? self._shrink : self._expand;
+		self._zoomimg.style.display = 'inline';
 	},
 	_hide_action : function()
 	{
@@ -717,10 +681,11 @@ LightBox.prototype = {
 			if (self._resizable)
 			{
 				self._funcs.wheel = function(evt) { self._onwheel(evt) };
-				Event.register(self._box,'mousewheel',self._funcs.wheel);
+				Spica.Event.register(self._box,'mousewheel',self._funcs.wheel);
 			}
-			Event.register(self._img,'mousedown',self._funcs.drag);
-			Event.register(self._img,'dblclick',self._funcs.dbl);
+			Spica.Event.register(self._img,'mousedown',self._funcs.drag);
+			Spica.Event.register(self._img,'dblclick',self._funcs.dbl);
+			self._show_caption(false);
 			if (closeBtn) closeBtn.style.display = 'none';
 		}
 		self._set_photo_size();
@@ -729,21 +694,21 @@ LightBox.prototype = {
 	_reset_func : function()
 	{
 		var self = this;
-		if (self._funcs.wheel != null) Event.deregister(self._box,'mousewheel',self._funcs.wheel);
-		if (self._funcs.move  != null) Event.deregister(self._img,'mousemove',self._funcs.move);
-		if (self._funcs.up    != null) Event.deregister(self._img,'mouseup',self._funcs.up);
-		if (self._funcs.drag  != null) Event.deregister(self._img,'mousedown',self._funcs.drag);
-		if (self._funcs.dbl   != null) Event.deregister(self._img,'dblclick',self._funcs.dbl);
+		if (self._funcs.wheel != null) Spica.Event.deregister(self._box,'mousewheel',self._funcs.wheel);
+		if (self._funcs.move  != null) Spica.Event.deregister(self._img,'mousemove',self._funcs.move);
+		if (self._funcs.up    != null) Spica.Event.deregister(self._img,'mouseup',self._funcs.up);
+		if (self._funcs.drag  != null) Spica.Event.deregister(self._img,'mousedown',self._funcs.drag);
+		if (self._funcs.dbl   != null) Spica.Event.deregister(self._img,'dblclick',self._funcs.dbl);
 		self._funcs = {'move':null,'up':null,'drag':null,'wheel':null,'dbl':null};
 	},
 	_onwheel : function(evt)
 	{
 		var self = this;
 		var delta = 0;
-		evt = Event.getEvent(evt);
+		evt = Spica.Event.getEvent(evt);
 		if (evt.wheelDelta)  delta = event.wheelDelta/-120;
 		else if (evt.detail) delta = evt.detail/3;
-		if (Browser.isOpera) delta = - delta;
+		if (Spica.Browser.isOpera) delta = - delta;
 		var step =
 			  (self._level < 1) ? 0.1
 			: (self._level < 2) ? 0.25
@@ -753,43 +718,43 @@ LightBox.prototype = {
 		if (self._level > 8) self._level = 8;
 		else if (self._level < 0.5) self._level = 0.5;
 		self._set_photo_size();
-		return Event.stop(evt);
+		return Spica.Event.stop(evt);
 	},
 	_dragstart : function(evt)
 	{
 		var self = this;
-		evt = Event.getEvent(evt);
+		evt = Spica.Event.getEvent(evt);
 		self._curpos.x = evt.screenX;
 		self._curpos.y = evt.screenY;
 		self._funcs.move = function(evnt) { self._dragging(evnt); };
 		self._funcs.up   = function(evnt) { self._dragstop(evnt); };
-		Event.register(self._img,'mousemove',self._funcs.move);
-		Event.register(self._img,'mouseup',self._funcs.up);
-		return Event.stop(evt);
+		Spica.Event.register(self._img,'mousemove',self._funcs.move);
+		Spica.Event.register(self._img,'mouseup',self._funcs.up);
+		return Spica.Event.stop(evt);
 	},
 	_dragging : function(evt)
 	{
 		var self = this;
-		evt = Event.getEvent(evt);
+		evt = Spica.Event.getEvent(evt);
 		self._imgpos.x += evt.screenX - self._curpos.x;
 		self._imgpos.y += evt.screenY - self._curpos.y;
 		self._curpos.x = evt.screenX;
 		self._curpos.y = evt.screenY;
 		self._set_photo_size();
-		return Event.stop(evt);
+		return Spica.Event.stop(evt);
 	},
 	_dragstop : function(evt)
 	{
 		var self = this;
-		evt = Event.getEvent(evt);
-		if (self._funcs.move  != null) Event.deregister(self._img,'mousemove',self._funcs.move);
-		if (self._funcs.up    != null) Event.deregister(self._img,'mouseup',self._funcs.up);
+		evt = Spica.Event.getEvent(evt);
+		if (self._funcs.move  != null) Spica.Event.deregister(self._img,'mousemove',self._funcs.move);
+		if (self._funcs.up    != null) Spica.Event.deregister(self._img,'mouseup',self._funcs.up);
 		self._funcs.move = null;
 		self._funcs.up   = null;
 		self._set_photo_size();
-		return (evt) ? Event.stop(evt) : false;
+		return (evt) ? Spica.Event.stop(evt) : false;
 	},
-	_show_caption : function(enable)
+	_show_caption : function(enable,initializing)
 	{
 		var self = this;
 		var caption = document.getElementById('lightboxCaption');
@@ -804,6 +769,7 @@ LightBox.prototype = {
 			caption.style.left = '0px';
 			caption.style.width = [self._img.width + 20,'px'].join(''); // 20 is total side margin of lightbox
 			caption.style.display = 'block';
+			self._setOpacity(caption, initializing ? 0 : 9.9);
 		}
 	},
 	_toggle_wrap : function(flag)
@@ -817,7 +783,7 @@ LightBox.prototype = {
 			{
 				var elem = document.getElementsByTagName(tags[i]);
 				for (var j=0,m=elem.length;j<m;j++)
-				{ // check the original value at first. when alredy hidden, dont touch them
+				{ // check the original value at first. when already hidden, dont touch them
 					var check = elem[j].style.visibility;
 					if (!check)
 					{
@@ -834,39 +800,55 @@ LightBox.prototype = {
 		}
 		for (var i=0,n=self._hiding.length;i<n;i++)
 			self._hiding[i].style.visibility = flag ? "hidden" : "visible";
+		if ( flag )
+			self._setOpacity(self._wrap,5);
+	},
+	_prepare : function(num)
+	{
+		var self = this;
+		if (self._open == -1) return;
+		self._set_size(false); // calc and set wrapper size
+		self._toggle_wrap(true);
+		self._box.style.display = "block";
+		self._hide_action();
+		self._img.src = self._blank;
+		var loading = document.getElementById('loadingImage');
+		if (loading) loading.style.display = 'inline';
+		var objs = ['effectImage','closeButton','lightboxCaption'];
+		for (var i in objs)
+		{
+			var obj = document.getElementById(objs[i]);
+			if (obj) obj.style.display = 'none';
+		}
 	},
 	_show : function(num)
 	{
 		var self = this;
 		var imag = new Image;
 		if (num < 0 || num >= self._imgs.length) return;
-		var loading = document.getElementById('loadingImage');
-		var caption = document.getElementById('lightboxCaption');
-		var effect = document.getElementById('effectImage');
 		self._open = num; // set opened image number
-		self._set_size(false); // calc and set wrapper size
-		self._toggle_wrap(true);
-		if (loading) loading.style.display = 'inline';
+		self._prepare();
+		self._set_photo_size();
 		imag.onload = function() {
+			self._expanded = false;
 			if (self._imgs[self._open].w == -1)
 			{ // store original image width and height
 				self._imgs[self._open].w = imag.width;
 				self._imgs[self._open].h = imag.height;
 			}
-			if (effect)
-			{
-				effect.style.display = (!effect.className || self._imgs[self._open].cls == effect.className)
-					? 'block' : 'none';
-			}
+			var caption = document.getElementById('lightboxCaption');
 			if (caption)
+			{
 				try { caption.innerHTML = self._imgs[self._open].title; } catch(e) {}
-			self._set_photo_size(); // calc and set lightbox size
-			self._hide_action();
-			self._box.style.display = "block";
-			self._img.src = imag.src;
+				self._show_caption(true,true);
+			}
+			self._anim.t = (new Date()).getTime();
+			self._timer = window.setInterval( function() { self._run() }, 20);
 			self._img.setAttribute('title',self._imgs[self._open].title);
-			self._timer = window.setInterval( function() { self._set_size(true) } , 100);
-			if (loading) loading.style.display = 'none';
+			self._anim.step = ( self._anim.f ) ? 0 : 2;
+			self._set_photo_size(); // calc and set lightbox size
+			if ( !self._anim.f ) // animator is disabled, so apply immediately
+				self._show_image();
 			if (self._imgs[self._open].set != 'lightbox')
 			{
 				var set = self._imgs[self._open].set;
@@ -876,7 +858,104 @@ LightBox.prototype = {
 		};
 		self._expandable = false;
 		self._expanded = false;
+		self._anim.step = -1;
 		imag.src = self._imgs[self._open].src;
+	},
+	_run : function()
+	{
+		var self = this;
+		var t = (new Date()).getTime();
+		if ( t - self._anim.t < 50 ) return;
+		self._anim.t = t;
+		self._set_size(true);
+		if ( self._anim.step == 0 || self._anim.w != self._img.width || self._anim.h != self._img.height )
+		{
+			self._doResizing();
+		}
+		else if ( self._anim.step == 1 )
+		{
+			self._doFadeIn();
+		}
+		else if ( self._anim.step == 3 )
+		{
+			self._doFadeOut();
+		}
+	},
+	_show_image : function()
+	{
+		var self = this;
+		if (self._open == -1) return;
+		self._img.src = self._imgs[self._open].src;
+		var loading = document.getElementById('loadingImage');
+		if (loading) loading.style.display = 'none';
+		var effect = document.getElementById('effectImage');
+		if (effect && (!effect.className || self._imgs[self._open].cls == effect.className))
+			effect.style.display = 'block';
+		var closeBtn = document.getElementById('closeButton');
+		if (closeBtn) closeBtn.style.display = 'inline';
+		self._show_caption(true);
+		if (self._actionEnabled) self._show_action();
+	},
+	_doResizing : function()
+	{
+		var self = this;
+		var diff = {
+			x: ( self._anim.f ) ? Math.floor((self._anim.w - self._img.width) / 3) : 0,
+			y: ( self._anim.f ) ? Math.floor((self._anim.h - self._img.height) / 3) : 0
+		};
+		self._img.width += diff.x;
+		self._img.height += diff.y;
+		if ( Math.abs(diff.x) < 1 ) self._img.width = self._anim.w;
+		if ( Math.abs(diff.y) < 1 ) self._img.height = self._anim.h;
+		if ( self._anim.w == self._img.width && self._anim.h == self._img.height )
+		{
+			self._changed = false;
+			self._set_photo_size();
+			if ( self._anim.step == 0 )
+			{
+				self._anim.step = 1; // move on the next stage
+				self._anim.a = 0;
+				self._show_image();
+				self._setOpacity(self._img,self._anim.a);
+			}
+		}
+		else if (self._anim.step == 2 && !self._expanded)
+			self._show_caption(true);
+	},
+	_doFadeIn : function()
+	{
+		var self = this;
+		self._anim.a += 2;
+		if ( self._anim.a > 10 )
+		{
+			self._anim.step = 2; // move on the next stage
+			self._anim.a = 9.9;
+		}
+		self._setOpacity(self._img,self._anim.a);
+	},
+	_doFadeOut : function()
+	{
+		var self = this;
+		self._anim.a -= 1;
+		if ( self._anim.a < 1 )
+		{
+			self._anim.step = 2; // finish
+			self._anim.a = 0;
+			if ( self._timer != null )
+			{
+				window.clearInterval(self._timer);
+				self._timer = null;
+			}
+			self._toggle_wrap(false);
+		}
+		self._setOpacity(self._wrap,self._anim.a);
+	},
+	_setOpacity : function(elem, alpha)
+	{
+		if (Spica.Browser.isWinIE)
+			elem.style.filter = 'alpha(opacity=' + (alpha * 10) + ')';
+		else
+			elem.style.opacity = alpha / 10;
 	},
 	_close_box : function()
 	{
@@ -884,14 +963,13 @@ LightBox.prototype = {
 		self._open = -1;
 		self._openedset = null;
 		self._hide_action();
-		self._hide_action();
 		self._reset_func();
 		self._show_overall(false);
 		self._box.style.display  = "none";
-		if (self._timer != null)
+		if ( !self._anim.f && self._timer != null )
 		{
- 			window.clearInterval(self._timer);
- 			self._timer = null;
+			window.clearInterval(self._timer);
+			self._timer = null;
 		}
 	},
 	_show_next : function(direction)
@@ -908,25 +986,35 @@ LightBox.prototype = {
 		var self = this;
 		if (evt != null)
 		{
-			evt = Event.getEvent(evt);
+			evt = Spica.Event.getEvent(evt);
 			var targ = evt.target || evt.srcElement;
 			if (targ && targ.getAttribute('id') == 'lightboxImage' && self._expanded) return;
 		}
 		self._close_box();
-		self._toggle_wrap(false);
+		if ( self._anim.f && self._anim.step == 2 )
+		{
+			self._anim.step = 3;
+			self._anim.a = 5;
+		}
+		else
+		{
+			self._toggle_wrap(false);
+		}
 	}
 };
-Event.register(window,"load",function() {
-	var lightbox = new LightBox({
+Spica.Event.run(function() { 
+	var lightbox = new Lightbox({
 		loadingimg: (location.protocol=='https:' ? 'https://static.slo-tech.com/stili/loading.gif' : 'http://static.slo-tech.com/stili/loading.gif'),
 		expandimg: (location.protocol=='https:' ? 'https://static.slo-tech.com/stili/expand.gif' : 'http://static.slo-tech.com/stili/expand.gif'),
 		shrinkimg: (location.protocol=='https:' ? 'https://static.slo-tech.com/stili/shrink.gif' : 'http://static.slo-tech.com/stili/shrink.gif'),
+		blank: (location.protocol=='https:' ? 'https://static.slo-tech.com/stili/close.gif' : 'http://static.slo-tech.com/stili/blank.gif'),
 		previmg:(location.protocol=='https:' ? 'https://static.slo-tech.com/stili/prev.gif' : 'http://static.slo-tech.com/stili/prev.gif'),
 		nextimg:(location.protocol=='https:' ? 'https://static.slo-tech.com/stili/next.gif' : 'http://static.slo-tech.com/stili/next.gif'),
 		effectimg:(location.protocol=='https:' ? 'https://static.slo-tech.com/stili/zzoop.gif' : 'http://static.slo-tech.com/stili/zzoop.gif'),
+		closeimg: (location.protocol=='https:' ? 'https://static.slo-tech.com/stili/close.gif' : 'http://static.slo-tech.com/stili/close.gif'),
 		effectpos:{x:-40,y:-20},
 		effectclass:'effectable',
-		closeimg: (location.protocol=='https:' ? 'https://static.slo-tech.com/stili/close.gif' : 'http://static.slo-tech.com/stili/close.gif'),
-		resizable:true
+		resizable:true,
+		animation:true
 	});
 });

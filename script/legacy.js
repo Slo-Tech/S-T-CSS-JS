@@ -86,28 +86,6 @@ var dom =
 		return false;
 	},
 	
-	/**
-	 * goes trough tab indexes to find the next input field and focuses it
-	 *
-	 * @param field			current field
-	 */
-	nextInput : function(field)
-	{
-		if(!field.tabIndex || !dom.tabIndexes[field.tabIndex])
-		{
-			return false;
-		}
-		else if(dom.tabIndexes[field.tabIndex + 1])
-		{
-			dom.tabIndexes[field.tabIndex + 1].focus();
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	},
-	
 	tabIndexes : [null]
 }
 

@@ -976,11 +976,14 @@ a.comments {font-weight: bold; font-size: 1.05em;}
 
 p.read_more a {padding:0.2em 0.3em 0 25px; background:url(http://static.slo-tech.com/stili/readmore.png) no-repeat center left; }
 
+#login-small {display: none;}
+
 @media (min-width:0px) and (max-width:999px) {
 	#banner {display: none;}
 	#fresh_articles {padding-right: 0;}
 	.news_item.exposed .image {clear: right;}
 	.signature {display: none}
+	.news_item.short .image, .news_item.short .youtube-player {width: 202px; float: right; margin: 0 1em 1em 1em;}
 }
 
 @media (min-width:1000px) and (max-width:1300px) {
