@@ -220,7 +220,6 @@ function attachInlineEdit(postdiv) {
           var updateurl = '/forum' + threadid + '/' + postid + '/uredi/';
         };
 
-        console.log(updateurl);
         $.post(updateurl,
                 {'vsebina':newcontent},
                 function(data){
@@ -308,7 +307,7 @@ if ($('.news_item.history').length != 0) {
           cache: true,
           context: this,
           success: function(html) {
-                $(this).before(html);
+		$(html).insertBefore(this).find("a[rel^='lightbox']").prettyPhoto();
           }
         });
     });
