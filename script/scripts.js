@@ -295,8 +295,8 @@ $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
 });
 
 /* Show more news */
-if ($('.history').length != 0) {
-    $('.history').html('<input type="submit" value="Prika\u017Ei starej\u0161e novice" class="submit">').click(function() {
+if ($('.news_item.history').length != 0) {
+    $('.news_item.history').html('<input type="submit" value="Prika\u017Ei starej\u0161e novice" class="submit">').click(function() {
         var threadid = /\/t(\d*)/.exec($(this).prev().find('header a:first').attr('href'));
 
         $.ajax({
