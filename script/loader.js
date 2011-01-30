@@ -11,9 +11,7 @@ document.write("<script src='http://st.fey/script/jquery.cookie.js'><\/script>")
 document.write("<script src='http://st.fey/script/jquery.textarearesizer.js'><\/script>");
 
 /* fancy upload */
-document.write("<link rel='stylesheet' href='http://st.fey/css/jquery-ui.css' id='theme'>");
 document.write("<link rel='stylesheet' href='http://st.fey/css/jquery.fileupload-ui.css'>");
-document.write("<script src='http://st.fey/script/jquery-ui.js'><\/script>");
 document.write("<script src='http://st.fey/script/jquery.fileupload.js'><\/script>");
 document.write("<script src='http://st.fey/script/jquery.fileupload-ui.js'><\/script>");
 
