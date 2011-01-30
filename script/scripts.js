@@ -368,6 +368,45 @@ $('#form_quick_reply').submit(function() {
   return false;
 });
 
+/* jQuery based file upload */
+ 
+$('.embargo:last').after('<table class="upload_files"></table><table class="download_files"></table>');
+$('.embargo:last').addClass('upload');
+$('.upload').fileUploadUI({
+    uploadTable: $('.upload_files'),
+    downloadTable: $('.download_files'),
+    method: 'POST',
+    url: $('#vnosnovic').attr('action'),
+    fieldName: 'datoteka',
+    buildUploadRow: function (files, index) {
+        var file = files[index];
+        return $(
+            '<tr>' +
+            '<td>' + file.name + '<\/td>' +
+            '<td class="file_upload_progress"><div><\/div><\/td>' +
+            '<td class="file_upload_cancel">' +
+            '<div class="ui-state-default ui-corner-all ui-state-hover" title="Cancel">' +
+            '<span class="ui-icon ui-icon-cancel">Cancel<\/span>' +
+            '<\/div>' +
+            '<\/td>' +
+            '<\/tr>'
+        );
+    },
+    buildDownloadRow: function (file) {
+        return $(
+            '<tr><td><img src="' + file.name + '" /> <input value="' + file.result + '"><\/td><\/tr>'
+        );
+    },
+    beforeSend: function (event, files, index, xhr, handler, callBack) {
+        handler.formData = {
+            akcija: 'nalozi',
+            vUID: $('#vnosnovic').find('input[name=vUID]').attr('value')
+        };
+        callBack();
+    }
+});
+
+/* Read more at the end of news */
 function applyReadMore(selector) {
     $(selector).find("p.read_more").each(function(index) {
                     var url = (("https:" == document.location.protocol) ? "https://" : "http://") + "slo-tech.com" + $(this).find("a").attr("href") + "/complete";
