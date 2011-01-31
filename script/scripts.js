@@ -9,13 +9,13 @@ $(document).ready(function(){
     var threat_text = $('#threat_text').text();
     $('#threat_text').hide();
     
-    if ($('#content_field').val() == ""){
+    if ($('#content_field').val() === ""){
       $('#content_field').val(threat_text);
       $('#content_field').focus(function(){
         $(this).val('');
         $(this).unbind('focus');
       });
-    };
+    }
   });
 
 
@@ -30,17 +30,17 @@ $(document).ready(function(){
     if ($('#vnosnovic').length > 0) {
       myForm = $('#vnosnovic');
       url = '/script/vnosi/vnosnovic.php';
-    };
+    }
     
     if ($('#vnosodgovora').length > 0) {
       myForm = $('#vnosodgovora');
       url = '/script/forum/vnossporocil.php';
-    };
+    }
 
     if ($('#vnostem').length > 0) {
       myForm = $('#vnostem');
       url = '/script/forum/vnostem.php';
-    };
+    }
     
     doAjaxPreview = function(){
         var serialized = myForm.formSerialize();
@@ -57,17 +57,17 @@ $(document).ready(function(){
 
   
     window._watch = function(){
-      if ($('#content_field').val() != formvalue){    
+      if ($('#content_field').val() !== formvalue){    
         doAjaxPreview();
-      };    
+      }    
         formvalue = $('#content_field').val();
-        setTimeout('window._watch()', 3000);
+        setTimeout(window._watch, 3000);
     };
     
-    if (typeof(myForm) != "undefined") {
+    if (typeof(myForm) !== "undefined") {
       formvalue = $('#content_field').val();
-      setTimeout('window._watch()', 3000);
-    };
+      setTimeout(window._watch, 3000);
+    }
   });
   
   $('span.ajaxcheck').live('click', function(){
@@ -77,11 +77,11 @@ $(document).ready(function(){
       
       $.getJSON(url, function(data){
         var response = eval(data);
-        if (response.status == 'off'){
+        if (response.status === 'off'){
           checkbox.checked = false;
         } else {
           checkbox.checked = true;
-        };
+        }
         anchor.href = response.link.replace(/&amp;/g, '&') + '&ajax=1';
       });      
       return false;
@@ -128,12 +128,12 @@ $('#tool_ban').click(function() {
 
 function getThreadID() {
 	var location = /\/t\d*/.exec(document.location.href);
-	if (location == null) {
+	if (location === null) {
 	  return false;
 	} else {
 	  return location[0];
-	};
-};
+	}
+}
 
 /* smart editing of titles */
 if ($('#naslovTeme')){
@@ -149,29 +149,31 @@ if ($('#naslovTeme')){
               {'naslovTeme':content.current},
               function(data){
                 $('#naslovTeme').html(data);
-              }) 
+              }); 
               
     }
   });
-};
+}
 
 /* hide deleted answers by default, if checkbox equals false */
-if ($("input[name='check_showzbrisana']").is(':checked') == true) {
+if ($("input[name='check_showzbrisana']").is(':checked') === true) {
   $('.post.deleted').each(function(index) {
     $(this).hide();
   });
-};
+}
 
 /* event to hide/show answers based on the checkbox setting */
 $("input[name='check_showzbrisana']").next().click(function() {
-  if ($("input[name='check_showzbrisana']").is(':checked') == true ) {
+  if ($("input[name='check_showzbrisana']").is(':checked') === true ) {
     $('.post.deleted').each(function(index) {
       $(this).show();
-    })}
+      });
+    }
   else {
     $('.post.deleted').each(function(index) {
       $(this).hide();
-    })};
+    });
+  }
 });
 
 /* editing of images */
@@ -182,10 +184,10 @@ function editableImages(selector) {
         onSubmit: function(content) {
             var imageid = /\d+/.exec($(this).parent().prev().attr('href'))[0];
             var updateurl = '/galerija/' +imageid + '/uredi';
-            $.post(updateurl, {'naslovSlike':content.current})
+            $.post(updateurl, {'naslovSlike':content.current});
         }
     });
-};
+}
 editableImages($('#content'));
 
 /* inline edit of posts for moderators */
@@ -195,13 +197,16 @@ function attachInlineEdit(postdiv) {
   var threadid = getThreadID();
   var postid = ans.find('a[name]').attr('name');
 
-  if (postid == 'p0') { // prvi post-zacetek teme
-    var rawurl = '/forum' + threadid + '/raw/nocache';
-    var urediurl = '/forum' + threadid + '/uredi';    
+  var rawurl = '';
+  var urediurl = '';
+
+  if (postid === 'p0') { // prvi post-zacetek teme
+    rawurl = '/forum' + threadid + '/raw/nocache';
+    urediurl = '/forum' + threadid + '/uredi';    
   } else {
-    var rawurl = '/forum' + threadid + '/' + postid + '/raw/nocache';
-    var urediurl = '/forum' + threadid + '/' + postid + '/uredi';    
-  };
+    rawurl = '/forum' + threadid + '/' + postid + '/raw/nocache';
+    urediurl = '/forum' + threadid + '/' + postid + '/uredi';    
+  }
   
   var content = ans.find('.content');
 
@@ -214,21 +219,22 @@ function attachInlineEdit(postdiv) {
 
       $(content).find('.save-inlineedit').click(function() {
         var newcontent = $(content).find('textarea').val();
-        if (postid == 'p0') {
-          var updateurl = '/forum' + threadid + '/uredi/';
+        var updateurl = '';
+        if (postid === 'p0') {
+          updateurl = '/forum' + threadid + '/uredi/';
         } else {
-          var updateurl = '/forum' + threadid + '/' + postid + '/uredi/';
-        };
+          updateurl = '/forum' + threadid + '/' + postid + '/uredi/';
+        }
 
         $.post(updateurl,
                 {'vsebina':newcontent},
                 function(data){
-                  if (data['status'] == 'ok') {
-                    var div = $(content).parents('div.post').html(data['postHtmlFull']);
+                  if (data.status === 'ok') {
+                    var div = $(content).parents('div.post').html(data.postHtmlFull);
                     attachInlineEdit(div.get(0));
                   } else {
                     $(content).html(savedhtml);
-                  };
+                  }
                   return false;
                 },
                 'jsonp');
@@ -243,15 +249,15 @@ function attachInlineEdit(postdiv) {
     return false;
   });  
   /* .inline-uredi.click */
-};
+}
 
 $('.post').each(function(index) {
   attachInlineEdit(this);
 });
 
 /* live feed FTW */
-feedUpdateInterval = 10000;
-updatelock = false;
+var feedUpdateInterval = 10000;
+var updatelock = false;
 
 function updatePosts() {
   if (!updatelock) {
@@ -266,7 +272,7 @@ function updatePosts() {
       data: {lastID: lastid},
       async: true,
       success: function(response) {
-        if (typeof response.newContent != 'undefined') {        
+        if (typeof response.newContent !== 'undefined') {        
           var newPosts = $('.post:last').after(response.newContent); //.hide().fadeIn('slow');
           newPosts.nextAll().andSelf().each(function(index) {
             attachInlineEdit(this);
@@ -277,8 +283,8 @@ function updatePosts() {
         } else {
           if (feedUpdateInterval < 30000) {
             feedUpdateInterval = feedUpdateInterval * 1.05;
-          };
-        };
+          }
+        }
 
         $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
             updatePosts();
@@ -287,14 +293,14 @@ function updatePosts() {
       }
     });
   }
-};
+}
 
 $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
   updatePosts();
 });
 
 /* Show more news */
-if ($('.news_item.history').length != 0) {
+if ($('.news_item.history').length !== 0) {
     $('.news_item.history').html('<input type="submit" value="Prika\u017Ei starej\u0161e novice" class="submit">').click(function() {
         var threadid = /\/t(\d*)/.exec($(this).prev().find('header a:first').attr('href'));
 
@@ -313,7 +319,7 @@ if ($('.news_item.history').length != 0) {
           }
         });
     });
-};
+}
 
 /* First post preview */
 function appendFirstpostInline(target, content) {
@@ -321,7 +327,7 @@ function appendFirstpostInline(target, content) {
 }
 
 function clickAppendFirstPost() {
-    var threadid = /\/t\d*/.exec($(this).next().find('h3 > a').attr('href'))
+    var threadid = /\/t\d*/.exec($(this).next().find('h3 > a').attr('href'));
     var updateurl = '/forum' + threadid[0] + '/check/';
 
     $.ajax({
@@ -342,7 +348,7 @@ function clickAppendFirstPost() {
           });
       }
     });
-};
+}
 $('tr > td.icon').click(clickAppendFirstPost);
 
 /* AJAX quickpost */
@@ -355,11 +361,11 @@ $('#form_quick_reply').submit(function() {
     data: $('#form_quick_reply').serializeArray(),
     dataType: 'json',
     success: function(response) {
-      if (response.go == 'refresh') {
+      if (response.go === 'refresh') {
         $('.post:last').remove();
-      } else if (response.go != 'ok') {
+      } else if (response.go !== 'ok') {
         window.location = response.go;
-      };
+      }
       $('#livefeed').stopTime("lfUpdate");
       updatePosts();
     }
@@ -370,7 +376,7 @@ $('#form_quick_reply').submit(function() {
 
 function applyReadMore(selector) {
     $(selector).find("p.read_more").each(function(index) {
-                    var url = (("https:" == document.location.protocol) ? "https://" : "http://") + "slo-tech.com" + $(this).find("a").attr("href") + "/complete";
+                    var url = (("https:" === document.location.protocol) ? "https://" : "http://") + "slo-tech.com" + $(this).find("a").attr("href") + "/complete";
             var wrapper = $(this).parent().find("div.besediloNovice");
             $(this).find("a").click(function() {
                     var a = $(this);
@@ -387,7 +393,7 @@ function applyReadMore(selector) {
             });
 
     });
-};
+}
 applyReadMore('div#content');
 
 $('div#menus ul#poll').each(function(index, poll) {
@@ -416,11 +422,11 @@ $('div#menus ul#poll').each(function(index, poll) {
 /* Hotkeys */
 
 function redirectLink (selector) {
-    if ($('div.pp_pic_holder').is(':visible')) { return true; };
+    if ($('div.pp_pic_holder').is(':visible')) { return true; }
     var url = $(selector).attr('href');
     if (url) {
       window.location = url;
-    };
+    }
     return true;
 }
 
@@ -431,19 +437,19 @@ $(document).bind('keydown', 'left', function() {redirectLink('li.prev a');});
 
 jQuery.extend(jQuery.expr[':'], {
     focus: function(element) { 
-        return element == document.activeElement; 
+        return element === document.activeElement; 
     }
 });
 
 function searchFocus(evt) {
-    if ($('div.pp_pic_holder').is(':visible')) { return true; };
+    if ($('div.pp_pic_holder').is(':visible')) { return true; }
     if ($('input.text[name=q]').is(':focus')) {
         return true;
     } else {
         $('input.text[name=q]').focus();
         return false;
     }
-};
+}
 
 $(document).bind('keydown', '/', searchFocus);
 $(document).bind('keydown', 'Shift+7', searchFocus);

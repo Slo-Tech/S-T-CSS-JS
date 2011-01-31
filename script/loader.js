@@ -1,3 +1,4 @@
+
 document.write("<script src='http://st.fey/script/js_quicktags.js'><\/script>");
 document.write("<script src='http://st.fey/script/legacy.js'><\/script>");
 
