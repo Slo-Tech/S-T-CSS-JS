@@ -49,12 +49,12 @@
 		var elArrayLength = elArray.length;
 		var i;
 		
-		for(var i = 0; i < elArrayLength; i++)
+		for(i = 0; i < elArrayLength; i++)
 		{
 			elArray[i].exec = func;
 			elArray[i].exec();
 		}
-	}
+	};
 
 
 /**
@@ -71,12 +71,11 @@ var dom =
 	hasParent : function(el, parent)
 	{
 		var parentEl = el.parentNode;
-		while(parentEl != document.body)
+		while(parentEl !==document.body)
 		{
-			if(parentEl == parent)
+			if(parentEl === parent)
 			{
 				return true;
-				break;
 			}
 			else
 			{
@@ -87,7 +86,7 @@ var dom =
 	},
 	
 	tabIndexes : [null]
-}
+};
 
 
 /* fresh news */
@@ -100,7 +99,7 @@ var freshNews =
 	mouseover : function()
 	{
 		window.clearTimeout(freshNews.to);
-		if(freshNews.step != 0)
+		if(freshNews.step !==0)
 		{
 			if(freshNews.step >= freshNews.height / 2)
 			{
@@ -127,11 +126,9 @@ var freshNews =
 		
 		var topX = freshNews.divAll.offsetTop;
 		var topY = freshNews.divAll.offsetLeft;
-		if ( (mouseX >= topX && (mouseX <= topX+freshNews.divAll.clientWidth)) && (mouseY >= topY && mouseY <= (topY + freshNews.divAll.clientHeight) )) {
-		  //console.log(mouseX, topX, topX+freshNews.divAll.clientWidth, mouseY, topY, topY + freshNews.divAll.clientHeight);
-		} else {
+		if ( !(mouseX >= topX && (mouseX <= topX+freshNews.divAll.clientWidth)) && !(mouseY >= topY && mouseY <= (topY + freshNews.divAll.clientHeight) )) {
 		  freshNews.hideAll();
-		};
+		}
 	},
 	
 	scroll : function()
@@ -178,7 +175,7 @@ var freshNews =
 	{
 		window.clearTimeout(freshNews.to);
 		
-		if(freshNews.divAll.style.display == 'none')
+		if(freshNews.divAll.style.display === 'none')
 		{
 			freshNews.to = window.setTimeout("freshNews.scroll()", freshNews.wait);
 		}
@@ -260,8 +257,8 @@ var controls =
 			jQuery('#content_field:not(.processed)').each(function(){
 				var form_height = $.cookie('form_height');
 				if (form_height){
-					$(this).height(parseInt(form_height));
-				};				
+					$(this).height(parseInt(form_height, 10));
+				}
 			});
 			jQuery('#content_field:not(.processed)').TextAreaResizer();
 		}
@@ -280,7 +277,7 @@ var controls =
 				controls.curEl = this.parentNode.parentNode;
 				controls.to = window.setTimeout("controls.menu.show()", 100);
 			}
-			else if(controls.menuShown && (controls.curEl == this || controls.curEl == this.parentNode.parentNode))
+			else if(controls.menuShown && (controls.curEl === this || controls.curEl === this.parentNode.parentNode))
 			{
 				window.clearTimeout(controls.to);
 			}
@@ -332,5 +329,5 @@ var controls =
 			window.clearTimeout(controls.to);
 		}
 	}
-}
+};
 onLoad(controls.prepare);
