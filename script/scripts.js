@@ -415,10 +415,19 @@ $('div#menus ul#poll').each(function(index, poll) {
 
 /* Hotkeys */
 
-$(document).bind('keydown', 'l', function() {window.location = $('li.next a').attr('href');});
-$(document).bind('keydown', 'right', function() {window.location = $('li.next a').attr('href');});
-$(document).bind('keydown', 'h', function() {window.location = $('li.prev a').attr('href');});
-$(document).bind('keydown', 'left', function() {window.location = $('li.prev a').attr('href');});
+function redirectLink (selector) {
+    if ($('div.pp_pic_holder').is(':visible')) { return true; };
+    var url = $(selector).attr('href');
+    if (url) {
+      window.location = url;
+    };
+    return true;
+}
+
+$(document).bind('keydown', 'l', function() {redirectLink('li.next a');});
+$(document).bind('keydown', 'right', function() {redirectLink('li.next a');});
+$(document).bind('keydown', 'h', function() {redirectLink('li.prev a');});
+$(document).bind('keydown', 'left', function() {redirectLink('li.prev a');});
 
 jQuery.extend(jQuery.expr[':'], {
     focus: function(element) { 
@@ -427,12 +436,13 @@ jQuery.extend(jQuery.expr[':'], {
 });
 
 function searchFocus(evt) {
-        if ($('input.text[name=q]').is(':focus')) {
-            return true;
-        } else {
-            $('input.text[name=q]').focus();
-            return false;
-        }
+    if ($('div.pp_pic_holder').is(':visible')) { return true; };
+    if ($('input.text[name=q]').is(':focus')) {
+        return true;
+    } else {
+        $('input.text[name=q]').focus();
+        return false;
+    }
 };
 
 $(document).bind('keydown', '/', searchFocus);
