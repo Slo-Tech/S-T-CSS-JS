@@ -1,3 +1,4 @@
+(function( $ ){
 $(document).ready(function(){
   /* turn of AJAX caching so things work sanely IE8 */
   $.ajaxSetup({
@@ -26,6 +27,8 @@ $(document).ready(function(){
     $('#predogled').show();
   });
 
+  var myForm = '';
+  var url = '';
   $('#content_field').each(function(){
     if ($('#vnosnovic').length > 0) {
       myForm = $('#vnosnovic');
@@ -75,8 +78,7 @@ $(document).ready(function(){
       var checkbox = $(this).find('input').get(0);
       var anchor = $(this).find('a').get(0);
       
-      $.getJSON(url, function(data){
-        var response = eval(data);
+      $.getJSON(url, function(response){
         if (response.status === 'off'){
           checkbox.checked = false;
         } else {
@@ -92,13 +94,12 @@ $(document).ready(function(){
       var url = $(this).get(0).href + '&ajax=1';
       var div = $(this).parents('div.post');
       
-      $.getJSON(url, function(data){
-        var response = eval(data);
+      $.getJSON(url, function(response){
         div.fadeOut('slow', function(){ 
              div.html(response.content);
              div.attr('class', 'post '+response.style);
            }).fadeIn('slow', function() {
-             attachInlineEdit(div.get(0));
+             div.attachInlineEdit();
            });
       });      
       return false;
@@ -177,8 +178,8 @@ $("input[name='check_showzbrisana']").next().click(function() {
 });
 
 /* editing of images */
-function editableImages(selector) {
-    $(selector).find('.image > .data > p.editable').editable({
+$.fn.editableImages = function editableImages() {
+    $(this).find('.image > .data > p.editable').editable({
         cancel:'Prekli\u010Di',
         submit:'Shrani',
         onSubmit: function(content) {
@@ -187,73 +188,72 @@ function editableImages(selector) {
             $.post(updateurl, {'naslovSlike':content.current});
         }
     });
-}
-editableImages($('#content'));
+};
+$('#content').editableImages();
 
 /* inline edit of posts for moderators */
 
-function attachInlineEdit(postdiv) {
-  var ans = $(postdiv);
-  var threadid = getThreadID();
-  var postid = ans.find('a[name]').attr('name');
+$.fn.attachInlineEdit = function() {
+  return this.each(function(){
+    var ans = $(this);
+    var threadid = getThreadID();
+    var postid = ans.find('a[name]').attr('name');
 
-  var rawurl = '';
-  var urediurl = '';
+    var rawurl = '';
+    var urediurl = '';
 
-  if (postid === 'p0') { // prvi post-zacetek teme
-    rawurl = '/forum' + threadid + '/raw/nocache';
-    urediurl = '/forum' + threadid + '/uredi';    
-  } else {
-    rawurl = '/forum' + threadid + '/' + postid + '/raw/nocache';
-    urediurl = '/forum' + threadid + '/' + postid + '/uredi';    
-  }
-  
-  var content = ans.find('.content');
+    if (postid === 'p0') { // prvi post-zacetek teme
+      rawurl = '/forum' + threadid + '/raw/nocache';
+      urediurl = '/forum' + threadid + '/uredi';    
+    } else {
+      rawurl = '/forum' + threadid + '/' + postid + '/raw/nocache';
+      urediurl = '/forum' + threadid + '/' + postid + '/uredi';    
+    }
+    
+    var content = ans.find('.content');
 
-  /* inline-uredi.click */
-  ans.find('a:contains("popravi")').click(function() {
-    jQuery.get(rawurl, function(data) {
-      var savedhtml = $(content).html();
-      $(content).html('<textarea style="width:100%;" rows="5">'+data+'</textarea>').append('<div style="text-align: right;"><a href="'+urediurl+'">polni popravi</a> <input type="submit" value="shrani" class="submit send save-inlineedit" accesskey="S" name="akcija"/> <input type="submit" value="prekli&#269;i" class="submit send cancel-inlineedit" accesskey="P" name="akcija"/> </div>');
-      $(content).find('textarea').TextAreaResizer();
+    /* inline-uredi.click */
+    ans.find('a:contains("popravi")').click(function() {
+      $.get(rawurl, function(data) {
+        var savedhtml = $(content).html();
+        $(content).html('<textarea style="width:100%;" rows="5">'+data+'</textarea>').append('<div style="text-align: right;"><a href="'+urediurl+'">polni popravi</a> <input type="submit" value="shrani" class="submit send save-inlineedit" accesskey="S" name="akcija"/> <input type="submit" value="prekli&#269;i" class="submit send cancel-inlineedit" accesskey="P" name="akcija"/> </div>');
+        $(content).find('textarea').TextAreaResizer();
 
-      $(content).find('.save-inlineedit').click(function() {
-        var newcontent = $(content).find('textarea').val();
-        var updateurl = '';
-        if (postid === 'p0') {
-          updateurl = '/forum' + threadid + '/uredi/';
-        } else {
-          updateurl = '/forum' + threadid + '/' + postid + '/uredi/';
-        }
+        $(content).find('.save-inlineedit').click(function() {
+          var newcontent = $(content).find('textarea').val();
+          var updateurl = '';
+          if (postid === 'p0') {
+            updateurl = '/forum' + threadid + '/uredi/';
+          } else {
+            updateurl = '/forum' + threadid + '/' + postid + '/uredi/';
+          }
 
-        $.post(updateurl,
-                {'vsebina':newcontent},
-                function(data){
-                  if (data.status === 'ok') {
-                    var div = $(content).parents('div.post').html(data.postHtmlFull);
-                    attachInlineEdit(div.get(0));
-                  } else {
-                    $(content).html(savedhtml);
-                  }
-                  return false;
-                },
-                'jsonp');
-        return false;
+          $.post(updateurl,
+                  {'vsebina':newcontent},
+                  function(data){
+                    if (data.status === 'ok') {
+                      var div = $(content).parents('div.post').html(data.postHtmlFull);
+                      div.attachInlineEdit();
+                    } else {
+                      $(content).html(savedhtml);
+                    }
+                    return false;
+                  },
+                  'jsonp');
+          return false;
+        });
+        
+        $(content).find('.cancel-inlineedit').click(function() {
+          $(content).html(savedhtml);
+          return false;
+        });
       });
-      
-      $(content).find('.cancel-inlineedit').click(function() {
-        $(content).html(savedhtml);
-        return false;
-      });
-    });
-    return false;
-  });  
-  /* .inline-uredi.click */
-}
-
-$('.post').each(function(index) {
-  attachInlineEdit(this);
-});
+      return false;
+    });  
+    /* .inline-uredi.click */
+  });
+};
+$('.post').attachInlineEdit();
 
 /* live feed FTW */
 var feedUpdateInterval = 10000;
@@ -275,8 +275,8 @@ function updatePosts() {
         if (typeof response.newContent !== 'undefined') {        
           var newPosts = $('.post:last').after(response.newContent); //.hide().fadeIn('slow');
           newPosts.nextAll().andSelf().each(function(index) {
-            attachInlineEdit(this);
-            editableImages(this);
+            $(this).attachInlineEdit();
+            $(this).editableImages();
           });
 
           feedUpdateInterval = 10000;
@@ -289,7 +289,7 @@ function updatePosts() {
         $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
             updatePosts();
         });
-	updatelock = false;
+	       updatelock = false;
       }
     });
   }
@@ -315,7 +315,7 @@ if ($('.news_item.history').length !== 0) {
           success: function(html) {
               var content = $(html).insertBefore(this);
               content.find("a[rel^='lightbox']").prettyPhoto();
-              applyReadMore(content);
+              content.applyReadMore();
           }
         });
     });
@@ -374,8 +374,8 @@ $('#form_quick_reply').submit(function() {
   return false;
 });
 
-function applyReadMore(selector) {
-    $(selector).find("p.read_more").each(function(index) {
+$.fn.applyReadMore = function(){
+    $(this).find("p.read_more").each(function(index) {
                     var url = (("https:" === document.location.protocol) ? "https://" : "http://") + "slo-tech.com" + $(this).find("a").attr("href") + "/complete";
             var wrapper = $(this).parent().find("div.besediloNovice");
             $(this).find("a").click(function() {
@@ -393,8 +393,8 @@ function applyReadMore(selector) {
             });
 
     });
-}
-applyReadMore('div#content');
+};
+$('div#content').applyReadMore();
 
 $('div#menus ul#poll').each(function(index, poll) {
 	var form = $(poll).find('form');
@@ -435,7 +435,7 @@ $(document).bind('keydown', 'right', function() {redirectLink('li.next a');});
 $(document).bind('keydown', 'h', function() {redirectLink('li.prev a');});
 $(document).bind('keydown', 'left', function() {redirectLink('li.prev a');});
 
-jQuery.extend(jQuery.expr[':'], {
+$.extend($.expr[':'], {
     focus: function(element) { 
         return element === document.activeElement; 
     }
@@ -455,3 +455,5 @@ $(document).bind('keydown', '/', searchFocus);
 $(document).bind('keydown', 'Shift+7', searchFocus);
 
 });
+
+}( jQuery ));
