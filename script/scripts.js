@@ -269,7 +269,7 @@ function updatePosts() {
       type: "POST",
       url: updateurl,
       dataType: 'jsonp',
-      data: {lastID: lastid},
+      data: {'lastID': lastid},
       async: true,
       success: function(response) {
         if (typeof response.newContent !== 'undefined') {        
@@ -308,7 +308,7 @@ if ($('.news_item.history').length !== 0) {
           type: "POST",
           url: '/novice/front-more',
           dataType: 'html',
-          data: {lastID: threadid[0] },
+          data: {'lastID': threadid[0] },
           async: true,
           cache: true,
           context: this,
@@ -334,7 +334,7 @@ function clickAppendFirstPost() {
       type: "GET",
       url: updateurl,
       dataType: 'jsonp',
-      data: {firstPost: true},
+      data: {'firstPost': true},
       async: true,
       cache: true,
       context: this,
