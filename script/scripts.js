@@ -45,7 +45,7 @@ $(document).ready(function(){
       url = '/script/forum/vnostem.php';
     }
     
-    doAjaxPreview = function(){
+    var doAjaxPreview = function(){
         var serialized = myForm.formSerialize();
         $.ajax({
           url: url,
@@ -58,7 +58,7 @@ $(document).ready(function(){
         });    
     };
 
-  
+    var formvalue = '';
     window._watch = function(){
       if ($('#content_field').val() !== formvalue){    
         doAjaxPreview();
