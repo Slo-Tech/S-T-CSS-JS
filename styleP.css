@@ -1170,3 +1170,15 @@ div.ppt{color:#fff;display: none;font-size:17px;margin:0 0 5px 15px;z-index:9999
 .clearfix {display: inline-block;}
 * html .clearfix {height:1%;}
 .clearfix {display:block;}
+
+
+.news_item.short.history:nth-of-type(2n+1) {border: 0; padding:2em 0; width: 100%; border-top:1px solid #AAA;}
+.news_item.short.history:nth-of-type(2n+2) {border: 0; padding:2em 0; border-top:1px solid #AAA;}
+.show-m {margin: 1em auto; width: 260px;}
+.show-m img {display: inline; margin:0 0 -3em 1em;}
+
+.history input {
+		border-width:1px; border-style:solid; -moz-border-radius:8px; -webkit-border-radius:8px; border-radius:8px;
+		overflow:visible; }
+.history input.submit {padding: 1em 2.5em .8em 2.5em;}
+
