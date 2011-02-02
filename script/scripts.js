@@ -301,7 +301,7 @@ $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
 
 /* Show more news */
 if ($('.news_item.history').length !== 0) {
-    $('.news_item.history').html('<input type="submit" value="Prika\u017Ei starej\u0161e novice" class="submit">').click(function() {
+    $('.news_item.history').html('<div class="show-m"><input type="submit" value="Prika\u017Ei starej\u0161e novice" class="submit"><img src="'+("https:" === document.location.protocol ? "https://" : "http://")+'static.slo-tech.com/img/icons/user.png"></div>').click(function() {
         var threadid = /\/t(\d*)/.exec($(this).prev().find('header a:first').attr('href'));
 
         $.ajax({
