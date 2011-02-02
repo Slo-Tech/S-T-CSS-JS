@@ -376,16 +376,18 @@ $('#form_quick_reply').submit(function() {
 
 $.fn.applyReadMore = function(){
     $(this).find("p.read_more").each(function(index) {
-                    var url = (("https:" === document.location.protocol) ? "https://" : "http://") + "slo-tech.com" + $(this).find("a").attr("href") + "/complete";
-            var wrapper = $(this).parent().find("div.besediloNovice");
+            var url = (("https:" === document.location.protocol) ? "https://" : "http://") + "slo-tech.com" + $(this).find("a").attr("href") + "/complete";
+            var wrapper = $(this).closest('article'); //.parent().find("div.besediloNovice");
             $(this).find("a").click(function() {
                     var a = $(this);
                     $.ajax({url:url, cache:true, dataType: 'html', success: function(html) {
-                            var from = html.indexOf('<div class="besediloNovice">');
-                            var to   = html.indexOf('<p class="comments">');
-                            var full = html.substring(from, to);
+                            var from = html.indexOf('<article>');
+                            var to   = html.indexOf('</article>');
+                            var full = $(html.substring(from, to)).html();
 
-                            $(wrapper).html(full);
+                            $(wrapper).html(full).find('div.history').hide();
+                            $(wrapper).closest(".news_item").addClass("exposed").editableImages();
+                            $(wrapper).find("a[rel^='lightbox']").prettyPhoto();
                             $(a).remove();
                     }
                     });
@@ -428,7 +430,7 @@ $('input[name=q]').each(function(){
     params: {location: document.location.href },
     minChars: 3,
     cache: true
-  });
+  })
 });
 
 
