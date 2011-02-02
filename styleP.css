@@ -1172,6 +1172,7 @@ div.ppt{color:#fff;display: none;font-size:17px;margin:0 0 5px 15px;z-index:9999
 .clearfix {display:block;}
 
 
+<<<<<<< HEAD
 .news_item.short.history:nth-of-type(2n+1) {border: 0; padding:2em 0; width: 100%; border-top:1px solid #AAA;}
 .news_item.short.history:nth-of-type(2n+2) {border: 0; padding:2em 0; border-top:1px solid #AAA;}
 .show-m {margin: 1em auto; width: 260px;}
@@ -1182,3 +1183,10 @@ div.ppt{color:#fff;display: none;font-size:17px;margin:0 0 5px 15px;z-index:9999
 		overflow:visible; }
 .history input.submit {padding: 1em 2.5em .8em 2.5em;}
 
+=======
+.autocomplete-w1 { background:url(img/shadow.png) no-repeat bottom right; position:absolute; top:0px; left:0px; margin:8px 0 0 6px; /* IE6 fix: */ _background:none; _margin:0; }
+.autocomplete { border:1px solid #999; background:#FFF; cursor:default; text-align:left; max-height:350px; overflow:auto; margin:-6px 6px 6px -6px; /* IE6 specific: */ _height:350px;  _margin:0; _overflow-x:hidden; }
+.autocomplete .selected { background:#F0F0F0; }
+.autocomplete div { padding:2px 5px; white-space:nowrap; }
+.autocomplete strong { font-weight:normal; color:#3399FF; }
+>>>>>>> 1369d41924e56f8eb1b2e1f127ecd04d70f05ef7
