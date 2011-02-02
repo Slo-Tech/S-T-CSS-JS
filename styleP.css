@@ -987,28 +987,28 @@ p.read_more a {padding:0.2em 0.3em 0 25px; background:url(http://static.slo-tech
 }
 
 @media (min-width:1000px) and (max-width:1300px) {
-	.news_item.short {max-width: 50%; height: 100%; border-top:1px solid #AAA; margin: 0; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; padding: 1em;}
+	.news_item.short {width: 50%; height: 100%; border-top:1px solid #AAA; margin: 0; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; padding: 1em;}
 	.news_item.short:nth-of-type(even) {padding-right: 0;}
 	.news_item.short:nth-of-type(odd) {clear: left; padding-left: 0;}
 	.news_item.exposed .image:nth-of-type(2n+1) {clear: right;}
 	}
 
 @media (min-width:1301px) and (max-width:1680px) {
-	.news_item.short {max-width: 33%; height: 100%; border-top:1px solid #AAA; margin: 0; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; padding: 1em;}
+	.news_item.short {width: 33.3%; height: 100%; border-top:1px solid #AAA; margin: 0; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; padding: 1em;}
 	.news_item.short:nth-of-type(3n) {padding-right: 0;}
 	.news_item.short:nth-of-type(3n+1) {clear:left; padding-left: 0;}
 	.news_item.exposed .image:nth-of-type(2n+1) {clear: right;}
 	}
 
 @media (min-width:1681px) and (max-width:1920px) {
-	.news_item.short {max-width: 25%; height: 100%; border-top:1px solid #AAA; margin: 0; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; padding: 1em;}
+	.news_item.short {width: 25%; height: 100%; border-top:1px solid #AAA; margin: 0; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; padding: 1em;}
 	.news_item.short:nth-of-type(4n) {padding-right: 0;}
 	.news_item.short:nth-of-type(4n+1) {clear:left; padding-left: 0;}
 	.news_item.exposed .image:nth-of-type(3n+1) {clear: right;}
 	}
 
 @media (min-width:1921px) {
-	.news_item.short {max-width: 20%; height: 100%; border-top:1px solid #AAA; margin: 0; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; padding: 1em;}
+	.news_item.short {width: 20%; height: 100%; border-top:1px solid #AAA; margin: 0; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; padding: 1em;}
 	.news_item.short:nth-of-type(5n) {padding-right: 0;}
 	.news_item.short:nth-of-type(5n+1) {clear: left; padding-left: 0;}
 	.news_item.exposed .image:nth-of-type(3n+1) {clear: right;}
