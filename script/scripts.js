@@ -419,6 +419,16 @@ $('div#menus ul#poll').each(function(index, poll) {
 	});
 });
 
+
+/* Autocomplete search */
+
+var ac = $('input[name=q]').autocomplete({
+  serviceUrl: '/forum/isci/autocomplete/',
+  params: {location: document.location.href },
+  minChars: 3,
+  cache: true
+});
+
 /* Hotkeys */
 
 function redirectLink (selector) {
