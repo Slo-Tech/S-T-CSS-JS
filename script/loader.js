@@ -1,6 +1,5 @@
 
 document.write("<script src='http://st.fey/script/js_quicktags.js'><\/script>");
-document.write("<script src='http://st.fey/script/legacy.js'><\/script>");
 
 document.write("<script src='http://st.fey/script/jquery.js'><\/script>");
 document.write("<script src='http://st.fey/script/jquery.prettyPhoto.js'><\/script>");
@@ -13,4 +12,5 @@ document.write("<script src='http://st.fey/script/jquery.textarearesizer.js'><\/
 document.write("<script src='http://st.fey/script/jquery.hotkeys.js'><\/script>");
 document.write("<script src='http://st.fey/script/jquery.autocomplete.js'><\/script>");
 
+document.write("<script src='http://st.fey/script/legacy.js'><\/script>");
 document.write("<script src='http://st.fey/script/scripts.js'><\/script>");

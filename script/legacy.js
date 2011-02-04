@@ -126,7 +126,7 @@ var freshNews =
 		
 		var topX = freshNews.divAll.offsetTop;
 		var topY = freshNews.divAll.offsetLeft;
-		if ( !(mouseX >= topX && (mouseX <= topX+freshNews.divAll.clientWidth)) && !(mouseY >= topY && mouseY <= (topY + freshNews.divAll.clientHeight) )) {
+		if ( !((mouseX >= topX && (mouseX <= topX+freshNews.divAll.clientWidth)) && (mouseY >= topY && mouseY <= (topY + freshNews.divAll.clientHeight))) ) {
 		  freshNews.hideAll();
 		}
 	},
