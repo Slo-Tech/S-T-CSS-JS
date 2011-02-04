@@ -959,8 +959,8 @@ html #content span.cal_placeholder, html #panels span.cal_placeholder {
 
 .news_item.exposed:last-of-type {clear: both; }
 
-.news_item.exposed .related {box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; float: left; margin-right: 2em}
-.news_item.exposed .history {max-width: 50%; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; float: left;clear:right}
+.news_item .related {box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; float: left; margin-right: 2em}
+.news_item .history {max-width: 50%; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; float: left;clear:right}
 
 .older_news_list {clear: both;}
 .news_item.short .besediloNovice {clear: left;}
