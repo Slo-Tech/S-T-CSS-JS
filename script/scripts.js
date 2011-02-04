@@ -384,9 +384,13 @@ $.fn.applyReadMore = function(){
                             var from = html.indexOf('<article>');
                             var to   = html.indexOf('</article>');
                             var full = $(html.substring(from, to)).html();
-
+                            
                             $(wrapper).html(full).find('div.history').hide();
-                            $(wrapper).closest(".news_item").addClass("exposed").editableImages();
+                            $(wrapper).closest(".news_item").editableImages();
+
+                            if ($(html).find('.exposed').length > 0) {
+                              $(wrapper).closest(".news_item").addClass("exposed");
+                            };
                             $(wrapper).find("a[rel^='lightbox']").prettyPhoto();
                             $(a).remove();
                     }
