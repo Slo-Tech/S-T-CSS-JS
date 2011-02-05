@@ -321,6 +321,84 @@ if ($('.news_item.history').length !== 0) {
     });
 }
 
+/* Fresh news ticker */
+$.fn.list_ticker = function(options){
+    var defaults = {
+      speed:4000,
+      isPaused: false
+    };
+    
+    var options = $.extend(defaults, options);
+    
+    this.each(function(){
+      var obj = $(this);
+      var list = obj.children();
+      list.not(':first').hide();
+      
+      setInterval(function(){
+        list = obj.children();
+        list.not(':first').hide();
+        
+        var first_li = list.eq(0)
+        var second_li = list.eq(1)
+
+        if (options.isPaused === false) {
+          first_li.fadeOut(function(){
+            second_li.fadeIn();
+            first_li.remove().appendTo(obj);
+          });
+        }
+      }, options.speed);
+    });
+    
+    $.fn.pause = function(){
+      options.isPaused = true;
+    }
+
+    $.fn.resume = function(){
+      options.isPaused = false;
+    }
+    return this;
+}
+
+/* Fresh news on top */
+var freshnews_divall = $('#fresh_news').clone(true).attr('id', 'fresh_news_all');
+$('#head').append(freshnews_divall);
+freshnews_divall.height(1.75 * freshnews_divall.find('li').length + 'em');
+
+var ticker = $('#fresh_news').list_ticker({'speed':6000});
+function freshnews_mouseover() {
+  freshnews_divall.show();
+  ticker.pause();
+}
+
+function freshnews_mouseout(e) {
+    var mouseX = e.pageX; var mouseY = e.pageY;
+    var topX = freshnews_divall.offset().left;
+    var topY = freshnews_divall.offset().top;
+
+    if ( !((mouseX >= topX && (mouseX <= topX+freshnews_divall.width())) && 
+           (mouseY >= topY && mouseY <= (topY + freshnews_divall.height()))) ) 
+    {
+          freshnews_divall.hide();
+          ticker.resume();
+    }
+}
+
+var freshnews_config = { sensitivity: 3, interval: 300, over: freshnews_mouseover, 
+                         timeout: 500, out: freshnews_mouseout };
+
+jQuery("#fresh_news").hoverIntent( freshnews_config );
+jQuery("#fresh_news_title").hoverIntent( freshnews_config );
+
+var freshnewsall_config = { sensitivity: 3, interval: 10, timeout: 500,  
+                            over: function(){ticker.pause();}, 
+                            out: function(){freshnews_divall.hide();ticker.resume();} 
+                          };
+freshnews_divall.hoverIntent(freshnews_config);
+
+
+
 /* First post preview */
 function appendFirstpostInline(target, content) {
     return $('<tr class="'+$(target).closest('tr').attr('class')+'"><td colspan="5"><div class="post">'+content+'</div></td></tr>').insertAfter($(target).closest('tr'));
