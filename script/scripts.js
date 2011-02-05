@@ -300,13 +300,18 @@ $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
 });
 
 /* Show more news */
-if ($('.news_item.history').length !== 0) {
-    $('.news_item.history').html('<div class="show-m"><input type="submit" value="Prika\u017Ei starej\u0161e novice" class="submit"><img src="'+("https:" === document.location.protocol ? "https://" : "http://")+'static.slo-tech.com/stili/img/icons/user.png"></div>').click(function() {
+if ($('.news_item.history').length !== 0 && 
+    $('.news_item.history').attr('rel') !== undefined &&   
+    $('.news_item.history').attr('alt') !== undefined
+   ) {
+    var text = $('.news_item.history').attr('alt');
+    $('.news_item.history').html('<div class="show-m"><input type="submit" value="'+text+'" class="submit"><img src="'+("https:" === document.location.protocol ? "https://" : "http://")+'static.slo-tech.com/stili/img/icons/user.png"></div>').click(function() {
         var threadid = /\/t(\d*)/.exec($(this).prev().find('header a:first').attr('href'));
+        var url = $('.news_item.history').attr('rel');
 
         $.ajax({
           type: "POST",
-          url: '/novice/front-more',
+          url: url,
           dataType: 'html',
           data: {'lastID': threadid[0] },
           async: true,
