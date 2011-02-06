@@ -46,31 +46,32 @@ $(document).ready(function(){
       url = '/script/forum/vnostem.php';
     }
     
-    var doAjaxPreview = function(){
-        var serialized = myForm.formSerialize();
-        $.ajax({
-          url: url,
-          cache: 'false',
-          type: 'POST',
-          data: 'akcija=predogledajax&'+serialized,
-          success: function(data){
-            $('#predogled').html(data);
-          }
-        });    
-    };
+    if (myForm !== null) {
+      var doAjaxPreview = function(){
+          var serialized = myForm.formSerialize();
+          $.ajax({
+            url: url,
+            cache: 'false',
+            type: 'POST',
+            data: 'akcija=predogledajax&'+serialized,
+            success: function(data){
+              $('#predogled').html(data);
+            }
+          });    
+      };
 
-    var formvalue = '';
-    window._watch = function(){
-      if ($('#content_field').val() !== formvalue){    
-        doAjaxPreview();
-      }    
+      var formvalue = '';
+      window._watch = function(){
+        if ($('#content_field').val() !== formvalue){    
+          doAjaxPreview();
+        }    
+          formvalue = $('#content_field').val();
+          setTimeout(window._watch, 3000);
+      };
+      
+      
         formvalue = $('#content_field').val();
         setTimeout(window._watch, 3000);
-    };
-    
-    if (myForm !== null) {
-      formvalue = $('#content_field').val();
-      setTimeout(window._watch, 3000);
     }
   });
     
