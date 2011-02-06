@@ -27,9 +27,10 @@ $(document).ready(function(){
     $('#predogled').show();
   });
 
-  var myForm = '';
-  var url = '';
   $('#content_field').each(function(){
+    var myForm = null;
+    var url = null;
+
     if ($('#vnosnovic').length > 0) {
       myForm = $('#vnosnovic');
       url = '/script/vnosi/vnosnovic.php';
@@ -67,12 +68,12 @@ $(document).ready(function(){
         setTimeout(window._watch, 3000);
     };
     
-    if (typeof(myForm) !== "undefined") {
+    if (myForm !== null) {
       formvalue = $('#content_field').val();
       setTimeout(window._watch, 3000);
     }
   });
-  
+    
   $('span.ajaxcheck').live('click', function(){
       var url = $(this).find('a').get(0).href + '&ajax=1';
       var checkbox = $(this).find('input').get(0);
