@@ -323,6 +323,10 @@ if ($('.news_item.history').length !== 0 &&
               var content = $(html).insertBefore(this);
               content.find("a[rel^='lightbox']").prettyPhoto();
               content.applyReadMore();
+
+              if ($(this).closest('.news_item.history').hasClass('once') === true) {
+                $(this).closest('.news_item.history').remove();
+              }
           }
         });
     });
