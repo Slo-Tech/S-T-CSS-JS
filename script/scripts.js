@@ -375,40 +375,23 @@ $.fn.list_ticker = function(options){
 /* Fresh news on top */
 var freshnews_divall = $('#fresh_news').clone(true).attr('id', 'fresh_news_all');
 $('#head').append(freshnews_divall);
-freshnews_divall.height(1.75 * freshnews_divall.find('li').length + 'em');
+var fn_wrapper = $('#fresh_news, #fresh_news_title, #fresh_news_all').wrapAll('<div id="fn_wrapper" />');
+freshnews_divall.height(1.8 * freshnews_divall.find('li').length + 'em');
 
 var ticker = $('#fresh_news').list_ticker({'speed':6000});
+
 function freshnews_mouseover() {
   freshnews_divall.show();
-  ticker.pause();
 }
 
 function freshnews_mouseout(e) {
-    var mouseX = e.pageX; var mouseY = e.pageY;
-    var topX = freshnews_divall.offset().left;
-    var topY = freshnews_divall.offset().top;
-
-    if ( !((mouseX >= topX && (mouseX <= topX+freshnews_divall.width())) && 
-           (mouseY >= topY && mouseY <= (topY + freshnews_divall.height()))) ) 
-    {
-          freshnews_divall.hide();
-          ticker.resume();
-    }
+  freshnews_divall.hide();
 }
 
 var freshnews_config = { sensitivity: 3, interval: 300, over: freshnews_mouseover, 
                          timeout: 500, out: freshnews_mouseout };
 
-jQuery("#fresh_news").hoverIntent( freshnews_config );
-jQuery("#fresh_news_title").hoverIntent( freshnews_config );
-
-var freshnewsall_config = { sensitivity: 3, interval: 10, timeout: 500,  
-                            over: function(){ticker.pause();}, 
-                            out: function(){freshnews_divall.hide();ticker.resume();} 
-                          };
-freshnews_divall.hoverIntent(freshnews_config);
-
-
+fn_wrapper.hoverIntent( freshnews_config );
 
 /* First post preview */
 function appendFirstpostInline(target, content) {
