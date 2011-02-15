@@ -939,3 +939,8 @@ eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 	// CommonJS
 	typeof(exports) != 'undefined' ? exports.Brush = Brush : null;
 })();
+;(function()
+{
+	  SyntaxHighlighter.defaults['toolbar'] = false;
+	  SyntaxHighlighter.highlight();
+})();
