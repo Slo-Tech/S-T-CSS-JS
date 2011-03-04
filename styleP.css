@@ -968,7 +968,7 @@ a.comments {font-weight: bold; font-size: 1.05em;}
 	padding: 1em !important;
 }
 
-p.read_more a, .article_read_more a {padding:0.2em 0.3em 0 25px; background:url(http://static.slo-tech.com/stili/readmore.png) no-repeat center left; }
+p.read_more a, .article_read_more a {padding:0.2em 0.3em 0 25px; background:url(/stili/readmore.png) no-repeat center left; }
 
 .article_read_more {margin: 0.5em 0;}
 
