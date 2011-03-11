@@ -1,16 +1,87 @@
+//namespace
+var ScriptLoader = {}; 
 
-document.write("<script src='http://st.fey/script/js_quicktags.js'><\/script>");
+//scripts object storing the state and callbacks of scripts
+ScriptLoader.scripts = {}; 
 
-document.write("<script src='http://st.fey/script/jquery.js'><\/script>");
-document.write("<script src='http://st.fey/script/jquery.prettyPhoto.js'><\/script>");
-document.write("<script src='http://st.fey/script/jquery.editable.js'><\/script>");
-document.write("<script src='http://st.fey/script/jquery.timers.js'><\/script>");
-document.write("<script src='http://st.fey/script/jquery.hoverIntent.js'><\/script>");
-document.write("<script src='http://st.fey/script/jquery.form.js'><\/script>");
-document.write("<script src='http://st.fey/script/jquery.cookie.js'><\/script>");
-document.write("<script src='http://st.fey/script/jquery.textarearesizer.js'><\/script>");
-document.write("<script src='http://st.fey/script/jquery.hotkeys.js'><\/script>");
-document.write("<script src='http://st.fey/script/jquery.autocomplete.js'><\/script>");
+//Handle multiple script callbacks to one single script
+ScriptLoader.onScriptLoad = function(url) {
+	var script = this.scripts[url];
+	script.loaded = true;
+	for (var i = 0, len = script.callbacks.length; i < len; i++)
+	{
+		var callback = script.callbacks[i];
+		if (typeof callback != 'undefined') callback();
+	}
+};
 
-document.write("<script src='http://st.fey/script/legacy.js'><\/script>");
-document.write("<script src='http://st.fey/script/scripts.js'><\/script>");
+//Main loader function
+ScriptLoader.load = function(url, callback) {
+
+	//Check if script has already been added to the loader
+	if (this.scripts[url] != undefined)
+	{
+		if (this.scripts[url].loaded) //File loaded
+		{
+			//Run callback straight away
+			if (typeof callback != 'undefined') callback();
+		}
+		else //Still loading
+		{
+			//Add callback to list for running later
+			this.scripts[url].callbacks.push(callback);
+		}
+
+		//Script already requested so exit here
+		return;
+	}
+
+	//Create tracker for this script to monitor status and build a list of callbacks
+	this.scripts[url] = {loaded: false, callbacks: [callback]};
+
+	//Add script element to DOM and add onload handlers for callbacks
+	var script = document.createElement("script")
+	script.type = "text/javascript";
+
+	if (script.readyState) //IE
+	{
+		script.onreadystatechange = function()
+		{
+            if (script.readyState == "loaded" ||
+                    script.readyState == "complete")
+			{
+                script.onreadystatechange = null;
+
+				ScriptLoader.onScriptLoad(url);
+			}
+        };
+    }
+   else //Other browsers
+   {
+	    script.onload = function(event)
+	    {
+			ScriptLoader.onScriptLoad(url);
+	   };
+    }
+
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+};
+
+
+ScriptLoader.load('https://st.fey/script/js_quicktags.js');
+ScriptLoader.load('https://st.fey/script/jquery-1.5.js');
+
+ScriptLoader.load('https://st.fey/script/jquery.prettyPhoto.js');
+ScriptLoader.load('https://st.fey/script/jquery.editable.js');
+ScriptLoader.load('https://st.fey/script/jquery.timers.js');
+ScriptLoader.load('https://st.fey/script/jquery.hoverIntent.js');
+ScriptLoader.load('https://st.fey/script/jquery.form.js');
+ScriptLoader.load('https://st.fey/script/jquery.cookie.js');
+ScriptLoader.load('https://st.fey/script/jquery.textarearesizer.js');
+ScriptLoader.load('https://st.fey/script/jquery.hotkeys.js');
+ScriptLoader.load('https://st.fey/script/jquery.autocomplete.js');
+ScriptLoader.load('https://st.fey/script/jquery.comet.js');
+
+ScriptLoader.load('https://st.fey/script/legacy.js');
+ScriptLoader.load('https://st.fey/script/scripts.js');
