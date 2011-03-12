@@ -24,19 +24,19 @@ jQuery.comet = {
 
         jQuery.comet.fetching = true;
 
-        // if (jQuery.browser.msie && window.XDomainRequest) {
-        //     var xdr = new XDomainRequest();
-        //     xdr.open("get", jQuery.comet.url);
+        if (jQuery.browser.msie && window.XDomainRequest) {
+            var xdr = new XDomainRequest();
+            xdr.open("get", jQuery.comet.url);
 
-        //     xdr.open("get", 'http://push.slo-tech.com/activity?id=forum');
-        //     xdr.onload = function() {
-        //         //callback(this.responseText, 'success');
-        //         console.log(this.responseText, 'success');
-        //     };
-        //     xdr.send();
+            xdr.open("get", 'http://push.slo-tech.com/activity?id=forum');
+            xdr.onload = function() {
+                //callback(this.responseText, 'success');
+                console.log(this.responseText, 'success');
+            };
+            xdr.send();
 
 
-        // } else {
+        } else {
             $.ajax({
                 type: jQuery.comet.settings.requestMethod,
                 url: jQuery.comet.url,
@@ -68,7 +68,7 @@ jQuery.comet = {
                     
                 }
             });
-        // }
+        }
     },
 
     handle_update: function(update) {
