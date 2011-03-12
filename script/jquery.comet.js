@@ -1,3 +1,5 @@
+(function(jQuery){
+
 jQuery.support.cors = true; 
 
 jQuery.comet = {
@@ -85,3 +87,5 @@ jQuery.comet = {
     },
 
 };
+
+}( jQuery ));
