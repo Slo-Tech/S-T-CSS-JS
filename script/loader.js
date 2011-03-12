@@ -69,19 +69,19 @@ ScriptLoader.load = function(url, callback) {
 };
 
 
+ScriptLoader.load('https://st.fey/script/jquery.js');
 ScriptLoader.load('https://st.fey/script/js_quicktags.js');
-ScriptLoader.load('https://st.fey/script/jquery-1.5.js');
 
 ScriptLoader.load('https://st.fey/script/jquery.prettyPhoto.js');
 ScriptLoader.load('https://st.fey/script/jquery.editable.js');
 ScriptLoader.load('https://st.fey/script/jquery.timers.js');
 ScriptLoader.load('https://st.fey/script/jquery.hoverIntent.js');
 ScriptLoader.load('https://st.fey/script/jquery.form.js');
-ScriptLoader.load('https://st.fey/script/jquery.cookie.js');
 ScriptLoader.load('https://st.fey/script/jquery.textarearesizer.js');
 ScriptLoader.load('https://st.fey/script/jquery.hotkeys.js');
 ScriptLoader.load('https://st.fey/script/jquery.autocomplete.js');
 ScriptLoader.load('https://st.fey/script/jquery.comet.js');
+ScriptLoader.load('https://st.fey/script/jquery.cookie.js');
 
 ScriptLoader.load('https://st.fey/script/legacy.js');
 ScriptLoader.load('https://st.fey/script/scripts.js');

@@ -1,4 +1,4 @@
-(function($){
+(function(jQuery){
 /*
  * Editable 1.3.4-beta
  *
@@ -8,7 +8,7 @@
  *
  * Date: Mar 04 2009
  */
-$.fn.editable = function(options){
+jQuery.fn.editable = function(options){
 	var defaults = {
 		onEdit: null,
 		onSubmit: null,
@@ -31,127 +31,127 @@ $.fn.editable = function(options){
 					.data('editable.current',null)
 					.data('editable.options',null);
 	
-	var options = $.extend(defaults, options);
+	var options = jQuery.extend(defaults, options);
 	
 	options.toEditable = function(){
-		$this = $(this);
-		$this.data('editable.current',$this.html());
-		opts = $this.data('editable.options');
-		$.editableFactory[opts.type].toEditable($this.empty(),opts);
+		jQuerythis = jQuery(this);
+		jQuerythis.data('editable.current',jQuerythis.html());
+		opts = jQuerythis.data('editable.options');
+		jQuery.editableFactory[opts.type].toEditable(jQuerythis.empty(),opts);
 		// Configure events,styles for changed content
-		$this.data('editable.previous',$this.data('editable.current'))
+		jQuerythis.data('editable.previous',jQuerythis.data('editable.current'))
 			 .children()
 				 .focus()
 				 .addClass(opts.editClass);
 		// Submit Event
 		if(opts.submit){
-			$('<button/>').appendTo($this)
+			jQuery('<button/>').appendTo(jQuerythis)
 						.html(opts.submit)
-						.one('mousedown',function(){opts.toNonEditable($(this).parent(),true)});
+						.one('mousedown',function(){opts.toNonEditable(jQuery(this).parent(),true)});
 		}else
-			$this.one(opts.submitBy,function(){opts.toNonEditable($(this),true)})
+			jQuerythis.one(opts.submitBy,function(){opts.toNonEditable(jQuery(this),true)})
 				 .children()
-				 	.one(opts.submitBy,function(){opts.toNonEditable($(this).parent(),true)});
+				 	.one(opts.submitBy,function(){opts.toNonEditable(jQuery(this).parent(),true)});
 		// Cancel Event
 		if(opts.cancel)
-			$('<button/>').appendTo($this)
+			jQuery('<button/>').appendTo(jQuerythis)
 						.html(opts.cancel)
-						.one('mousedown',function(){opts.toNonEditable($(this).parent(),false)});
+						.one('mousedown',function(){opts.toNonEditable(jQuery(this).parent(),false)});
 		// Call User Function
-		if($.isFunction(opts.onEdit))
-			opts.onEdit.apply(	$this,
+		if(jQuery.isFunction(opts.onEdit))
+			opts.onEdit.apply(	jQuerythis,
 									[{
-										current:$this.data('editable.current'),
-										previous:$this.data('editable.previous')
+										current:jQuerythis.data('editable.current'),
+										previous:jQuerythis.data('editable.previous')
 									}]
 								);
 	}
-	options.toNonEditable = function($this,change){
-		opts = $this.data('editable.options');
+	options.toNonEditable = function(jQuerythis,change){
+		opts = jQuerythis.data('editable.options');
 		// Configure events,styles for changed content
-		$this.one(opts.editBy,opts.toEditable)
+		jQuerythis.one(opts.editBy,opts.toEditable)
 			 .data( 'editable.current',
 				    change 
-						?$.editableFactory[opts.type].getValue($this,opts)
-						:$this.data('editable.current')
+						?jQuery.editableFactory[opts.type].getValue(jQuerythis,opts)
+						:jQuerythis.data('editable.current')
 					)
 			 .html(
 				    opts.type=='password'
 				   		?'*****'
-						:$this.data('editable.current')
+						:jQuerythis.data('editable.current')
 					);
 		// Call User Function
 		var func = null;
-		if($.isFunction(opts.onSubmit)&&change==true)
+		if(jQuery.isFunction(opts.onSubmit)&&change==true)
 			func = opts.onSubmit;
-		else if($.isFunction(opts.onCancel)&&change==false)
+		else if(jQuery.isFunction(opts.onCancel)&&change==false)
 			func = opts.onCancel;
 		if(func!=null)
-			func.apply($this,
+			func.apply(jQuerythis,
 						[{
-							current:$this.data('editable.current'),
-							previous:$this.data('editable.previous')
+							current:jQuerythis.data('editable.current'),
+							previous:jQuerythis.data('editable.previous')
 						}]
 					);
 	}
 	this.data('editable.options',options);
 	return  this.one(options.editBy,options.toEditable);
 }
-$.editableFactory = {
+jQuery.editableFactory = {
 	'text': {
-		toEditable: function($this,options){
-			$('<input/>').appendTo($this)
-						 .val($this.data('editable.current'));
+		toEditable: function(jQuerythis,options){
+			jQuery('<input/>').appendTo(jQuerythis)
+						 .val(jQuerythis.data('editable.current'));
 		},
-		getValue: function($this,options){
-			return $this.children().val();
+		getValue: function(jQuerythis,options){
+			return jQuerythis.children().val();
 		}
 	},
 	'password': {
-		toEditable: function($this,options){
-			$this.data('editable.current',$this.data('editable.password'));
-			$this.data('editable.previous',$this.data('editable.password'));
-			$('<input type="password"/>').appendTo($this)
-										 .val($this.data('editable.current'));
+		toEditable: function(jQuerythis,options){
+			jQuerythis.data('editable.current',jQuerythis.data('editable.password'));
+			jQuerythis.data('editable.previous',jQuerythis.data('editable.password'));
+			jQuery('<input type="password"/>').appendTo(jQuerythis)
+										 .val(jQuerythis.data('editable.current'));
 		},
-		getValue: function($this,options){
-			$this.data('editable.password',$this.children().val());
-			return $this.children().val();
+		getValue: function(jQuerythis,options){
+			jQuerythis.data('editable.password',jQuerythis.children().val());
+			return jQuerythis.children().val();
 		}
 	},
 	'textarea': {
-		toEditable: function($this,options){
-			$('<textarea/>').appendTo($this)
-							.val($this.data('editable.current'));
+		toEditable: function(jQuerythis,options){
+			jQuery('<textarea/>').appendTo(jQuerythis)
+							.val(jQuerythis.data('editable.current'));
 		},
-		getValue: function($this,options){
-			return $this.children().val();
+		getValue: function(jQuerythis,options){
+			return jQuerythis.children().val();
 		}
 	},
 	'select': {
-		toEditable: function($this,options){
-			$select = $('<select/>').appendTo($this);
-			$.each( options.options,
+		toEditable: function(jQuerythis,options){
+			jQueryselect = jQuery('<select/>').appendTo(jQuerythis);
+			jQuery.each( options.options,
 					function(key,value){
-						$('<option/>').appendTo($select)
+						jQuery('<option/>').appendTo(jQueryselect)
 									.html(value)
 									.attr('value',key);
 					}
 				   )
-			$select.children().each(
+			jQueryselect.children().each(
 				function(){
-					var opt = $(this);
-					if(opt.text()==$this.data('editable.current'))
+					var opt = jQuery(this);
+					if(opt.text()==jQuerythis.data('editable.current'))
 						return opt.attr('selected', 'selected').text();
 				}
 			)
 		},
-		getValue: function($this,options){
+		getValue: function(jQuerythis,options){
 			var item = null;
-			$('select', $this).children().each(
+			jQuery('select', jQuerythis).children().each(
 				function(){
-					if($(this).attr('selected'))
-						return item = $(this).text();
+					if(jQuery(this).attr('selected'))
+						return item = jQuery(this).text();
 				}
 			)
 			return item;

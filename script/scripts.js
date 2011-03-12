@@ -45,7 +45,7 @@ $(document).ready(function(){
       myForm = $('#vnostem');
       url = '/script/forum/vnostem.php';
     }
-    
+
     if (myForm !== null) {
       var doAjaxPreview = function(){
           var serialized = myForm.formSerialize();
@@ -69,12 +69,11 @@ $(document).ready(function(){
           setTimeout(window._watch, 3000);
       };
       
-      
-        formvalue = $('#content_field').val();
-        setTimeout(window._watch, 3000);
-    }
+      formvalue = $('#content_field').val();
+      setTimeout(window._watch, 3000);
+    };
   });
-    
+  
   $('span.ajaxcheck').live('click', function(){
       var url = $(this).find('a').get(0).href + '&ajax=1';
       var checkbox = $(this).find('input').get(0);
@@ -258,48 +257,91 @@ $.fn.attachInlineEdit = function() {
 $('.post').attachInlineEdit();
 
 /* live feed FTW */
-var feedUpdateInterval = 10000;
-var updatelock = false;
-
-function updatePosts() {
-  if (!updatelock) {
-    updatelock = true;
+function updatePosts(postid) {
     var threadid = getThreadID();
-    var updateurl = '/forum' + threadid + '/check/';
     var lastid = $('.post:last > .avatar').attr('name').substring(1);
+    var updateurl = '/forum' + threadid + '/check/';
+
+    if (postid !== undefined) {
+      if ($('a[name='+postid+']').length > 0) {
+        updateurl = '/forum' + threadid + '/check/?count=1';
+        lastid = parseInt(data.postid.substring(1)) - 1;
+      } else {
+        return 
+      }
+    };
+    
     $.ajax({
-      type: "POST",
+      type: "POST", 
       url: updateurl,
       dataType: 'jsonp',
       data: {'lastID': lastid},
       async: true,
       success: function(response) {
-        if (typeof response.newContent !== 'undefined') {        
-          var newPosts = $('.post:last').after(response.newContent); //.hide().fadeIn('slow');
-          newPosts.nextAll().andSelf().each(function(index) {
-            $(this).attachInlineEdit();
-            $(this).editableImages();
-          });
+        if (typeof response.newContent !== 'undefined') {
+          if (postid !== undefined) {
+            var newPosts = $(response.newContent).replaceAll($('a[name='+postid+']').closest('.post'));
+            $(newPosts).attachInlineEdit().editableImages();
+          } else {
+            /* responses are async, so we might already have :last post, so we check if current :last is
+               in new response and remove it from page (since we assume new one is always better)  */
+          
+            var newContent = $(response.newContent);
+            var last_post = $('.avatar:last');
+            
+            if (newContent.find('.avatar:last').attr('name') === last_post.attr('name')) {
+              last_post.closest('.post').remove();
+            }
+            var newPosts = $('.post:last').after(newContent);
 
-          feedUpdateInterval = 10000;
-        } else {
-          if (feedUpdateInterval < 30000) {
-            feedUpdateInterval = feedUpdateInterval * 1.05;
+            newPosts.nextAll().andSelf().each(function(index) {
+              $(this).attachInlineEdit();
+              $(this).editableImages();
+            });
           }
         }
-
-        $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
-            updatePosts();
-        });
-	       updatelock = false;
       }
     });
-  }
 }
 
-$('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
-  updatePosts();
-});
+/* Comet */
+
+// http://push.slo-tech.com/
+//  /activity?id=novice
+//  /activity?id=forum
+//  curl http://push.slo-tech.com/publish?id=novice --data-binary 'zivjo vsi 4'
+
+if (getThreadID() !== false) {
+  var threadid = getThreadID();
+
+  function catchAll(event, data, type) {
+    console.log(event, type, data);
+  }
+
+  function updateCheck(event, data, type) {
+    if (type === 'novOdgovor' || type === 'posodobiOdgovor') {
+      if (type === 'posodobiOdgovor' && 
+          '/'+data.threadid === threadid) {
+          updatePosts(data.postid);
+      } else {
+        if (data.hasOwnProperty('postid')) {
+          if ($('a[name='+data.postid+']').length === 0 && 
+                '/'+data.threadid === threadid) {
+            updatePosts();
+          }
+        };
+      }
+    }
+  }
+
+  $.comet.connect('http://push.slo-tech.com/activity?id=forum');
+
+  $(document).bind('.comet', catchAll);
+  
+  $(document).bind('novOdgovor.comet', updateCheck);
+  $(document).bind('posodobiOdgovor.comet', updateCheck);
+};
+
 
 /* Show more news */
 if ($('.news_item.history').length !== 0 && 
@@ -438,7 +480,6 @@ $('#form_quick_reply').submit(function() {
       } else if (response.go !== 'ok') {
         window.location = response.go;
       }
-      $('#livefeed').stopTime("lfUpdate");
       updatePosts();
     }
   });
@@ -496,7 +537,6 @@ $('div#menus ul#poll').each(function(index, poll) {
 		return false;
 	});
 });
-
 
 /* Autocomplete search */
 
