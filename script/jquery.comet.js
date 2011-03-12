@@ -29,8 +29,6 @@ jQuery.comet = {
         if (jQuery.browser.msie && window.XDomainRequest) {
             var xdr = new XDomainRequest();
             xdr.open("get", jQuery.comet.url);
-
-            xdr.open("get", 'http://push.slo-tech.com/activity?id=forum');
             xdr.onload = function() {
                 var response = jQuery.parseJSON(this.responseText);
                 jQuery.comet.fetching = false;
