@@ -336,7 +336,7 @@ if (getThreadID() !== false) {
 
   $.comet.connect('http://push.slo-tech.com/activity?id=forum');
 
-  $(document).bind('.comet', catchAll);
+  //$(document).bind('.comet', catchAll);
   
   $(document).bind('novOdgovor.comet', updateCheck);
   $(document).bind('posodobiOdgovor.comet', updateCheck);
