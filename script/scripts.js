@@ -334,7 +334,7 @@ if (getThreadID() !== false) {
     }
   }
 
-  $.comet.connect('http://push.slo-tech.com/activity?id=forum');
+  $.comet.connect(('https:' == document.location.protocol ? 'https://' : 'http://')+'push.slo-tech.com/activity?id=forum');
 
   //$(document).bind('.comet', catchAll);
   
