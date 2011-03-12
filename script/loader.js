@@ -83,6 +83,7 @@ ScriptLoader.load('https://st.fey/script/jquery.js', function() {
 	ScriptLoader.load('https://st.fey/script/jquery.comet.js');
 	ScriptLoader.load('https://st.fey/script/jquery.cookie.js');
 
-	ScriptLoader.load('https://st.fey/script/legacy.js');
-	ScriptLoader.load('https://st.fey/script/scripts.js');
+	ScriptLoader.load('https://st.fey/script/scripts.js', function(){
+		ScriptLoader.load('https://st.fey/script/legacy.js');
+	});
 });

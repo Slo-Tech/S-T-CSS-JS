@@ -32,11 +32,12 @@ jQuery.comet = {
 
             xdr.open("get", 'http://push.slo-tech.com/activity?id=forum');
             xdr.onload = function() {
-                //callback(this.responseText, 'success');
-                console.log(this.responseText, 'success');
+                var response = jQuery.parseJSON(this.responseText);
+                jQuery.comet.fetching = false;
+                jQuery.comet.handle_update(response);
+                setTimeout(jQuery.comet.fetch, 1);
             };
             xdr.send();
-
 
         } else {
             $.ajax({
@@ -50,7 +51,6 @@ jQuery.comet = {
                 dataType: 'json',
             
                 success: function(data) {
-                    //console.log('success');
                     jQuery.comet.fetching = false;
                     jQuery.comet.handle_update(data);
                     setTimeout(jQuery.comet.fetch, 1);
@@ -76,13 +76,13 @@ jQuery.comet = {
     handle_update: function(update) {
         type = null;
         data = update;
+
         if (update[jQuery.comet.settings.typeAttr]) {
             type = update[jQuery.comet.settings.typeAttr];
         }
         if (update[jQuery.comet.settings.dataAttr]) {
             data = update[jQuery.comet.settings.dataAttr];
         }
-        
         jQuery(document).trigger(type + ".comet", [data, type]);
     },
 
