@@ -549,6 +549,7 @@ $('input[name=q]').each(function(){
   })
 });
 
+$("a[rel^='lightbox']").prettyPhoto();
 
 /* Hotkeys */
 
