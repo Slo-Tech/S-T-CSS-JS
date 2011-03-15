@@ -82,6 +82,7 @@ ScriptLoader.load('https://st.fey/script/jquery.js', function() {
 	ScriptLoader.load('https://st.fey/script/jquery.autocomplete.js');
 	ScriptLoader.load('https://st.fey/script/jquery.comet.js');
 	ScriptLoader.load('https://st.fey/script/jquery.cookie.js');
+	ScriptLoader.load('https://st.fey/script/jquery.spotlight.min.js');
 
 	ScriptLoader.load('https://st.fey/script/scripts.js', function(){
 		ScriptLoader.load('https://st.fey/script/legacy.js');
