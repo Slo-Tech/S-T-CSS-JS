@@ -312,11 +312,12 @@ function updatePosts(postid) {
 //  curl http://push.slo-tech.com/publish?id=novice --data-binary 'zivjo vsi 4'
 
 
-$(document).load(function(){
+$(window).load(function(){
 
 function catchAll(event, data, type) {
   console.log(event, type, data);
 }
+
 
 if (getThreadID() !== false) {
   var threadid = getThreadID();
