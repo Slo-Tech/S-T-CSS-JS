@@ -312,7 +312,7 @@ function updatePosts(postid) {
 //  curl http://push.slo-tech.com/publish?id=novice --data-binary 'zivjo vsi 4'
 
 
-$(window).ready(function(){
+setTimeout(function () {
 
 function catchAll(event, data, type) {
   console.log(event, type, data);
@@ -404,7 +404,7 @@ if ($('.news_item').length !== 0) {
   $(document).bind('novOdgovor.comet', updateComments);  
 }
 
-});//end onload
+}, 50);//end timeout
 
 /* Show more news */
 if ($('.news_item.history').length !== 0 && 
