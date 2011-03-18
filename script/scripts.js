@@ -336,7 +336,6 @@ if (getThreadID() !== false) {
 
   $.comet.connect(('https:' == document.location.protocol ? 'https://' : 'http://')+'push.slo-tech.com/activity?id=forum');
 
-  // $(document).bind('novOdgovor.comet', catchAll);
   // $(document).bind('posodobiOdgovor.comet', catchAll);
   
   $(document).bind('novOdgovor.comet', updateCheck);
@@ -347,7 +346,7 @@ if (getThreadID() !== false) {
   function updateComments(event, data, type) {
     if (type === 'novOdgovor') {
       var lookup = $('a.comments[href*="'+data.threadid+'"]');
-      if (lookup.length !=0 ){
+      if (lookup.length !== 0 ){
         text = '';
         switch (data.count % 100) {
           case 0: text = data.count+" komentarjev"; break;
@@ -361,7 +360,40 @@ if (getThreadID() !== false) {
       }
     }
   }
+
+  function updateNews(event, data, type) {
+    if (type === 'popravekNovice') {
+      var lookup = $('h3 a[href*="'+data.threadid+'"]').closest('.news_item');
+      if (lookup.length !== 0 ){
+        var news_type = '/abstract';
+        if (lookup.find('p.read_more').length === 0){
+          news_type = '/complete'
+        }
+        if (lookup.get(0) === $('.exposed:first').get(0)) {
+          news_type = '/first'
+        }
+        var url = (("https:" === document.location.protocol) ? "https://" : "http://") + "slo-tech.com/novice/" + data.threadid + news_type;
+        var wrapper = $(lookup).find('article');
+  
+        $.ajax({url:url, cache:true, dataType: 'html', success: function(html) {
+            var from = html.indexOf('<article>');
+            var to   = html.indexOf('</article>');
+            var full = $(html.substring(from, to)).html();
+            
+            $(wrapper).html(full).find('div.history').hide();
+            $(wrapper).closest(".news_item").editableImages();
+
+            if ($(html).find('.exposed').length > 0) {
+              $(wrapper).closest(".news_item").addClass("exposed");
+            };
+            $(wrapper).find("a[rel^='lightbox']").prettyPhoto();
+          }
+        });
+      }
+    }
+  }
   // $(document).bind('novOdgovor.comet', catchAll);
+  $(document).bind('popravekNovice.comet', updateNews);
   $(document).bind('novOdgovor.comet', updateComments);  
 }
 
