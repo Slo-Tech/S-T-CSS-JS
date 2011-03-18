@@ -311,12 +311,12 @@ function updatePosts(postid) {
 //  /activity?id=forum
 //  curl http://push.slo-tech.com/publish?id=novice --data-binary 'zivjo vsi 4'
 
+function catchAll(event, data, type) {
+  console.log(event, type, data);
+}
+
 if (getThreadID() !== false) {
   var threadid = getThreadID();
-
-  function catchAll(event, data, type) {
-    console.log(event, type, data);
-  }
 
   function updateCheck(event, data, type) {
     if (type === 'novOdgovor' || type === 'posodobiOdgovor') {
@@ -336,11 +336,34 @@ if (getThreadID() !== false) {
 
   $.comet.connect(('https:' == document.location.protocol ? 'https://' : 'http://')+'push.slo-tech.com/activity?id=forum');
 
-  //$(document).bind('.comet', catchAll);
+  // $(document).bind('novOdgovor.comet', catchAll);
+  // $(document).bind('posodobiOdgovor.comet', catchAll);
   
   $(document).bind('novOdgovor.comet', updateCheck);
   $(document).bind('posodobiOdgovor.comet', updateCheck);
-};
+} else if ($('.news_item').length !== 0) {
+  $.comet.connect(('https:' == document.location.protocol ? 'https://' : 'http://')+'push.slo-tech.com/activity?id=forum');
+  
+  function updateComments(event, data, type) {
+    if (type === 'novOdgovor') {
+      var lookup = $('a.comments[href*="'+data.threadid+'"]');
+      if (lookup.length !=0 ){
+        text = '';
+        switch (data.count % 100) {
+          case 0: text = data.count+" komentarjev"; break;
+          case 1: text = data.count+" komentar"; break;
+          case 2: text = data.count+" komentarja"; break;
+          case 3: text = data.count+" komentarji"; break;
+          case 4: text = data.count+" komentarji"; break;
+          default : text = data.count+" komentarjev"; break;
+        }
+        lookup.text(text);
+      }
+    }
+  }
+  // $(document).bind('novOdgovor.comet', catchAll);
+  $(document).bind('novOdgovor.comet', updateComments);  
+}
 
 
 /* Show more news */
