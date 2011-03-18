@@ -340,8 +340,11 @@ if (getThreadID() !== false) {
   
   $(document).bind('novOdgovor.comet', updateCheck);
   $(document).bind('posodobiOdgovor.comet', updateCheck);
-} else if ($('.news_item').length !== 0) {
-  $.comet.connect(('https:' == document.location.protocol ? 'https://' : 'http://')+'push.slo-tech.com/activity?id=forum');
+}
+if ($('.news_item').length !== 0) {
+  if (!$.comet.fetching){
+    $.comet.connect(('https:' == document.location.protocol ? 'https://' : 'http://')+'push.slo-tech.com/activity?id=forum');
+  } 
   
   function updateComments(event, data, type) {
     if (type === 'novOdgovor') {
