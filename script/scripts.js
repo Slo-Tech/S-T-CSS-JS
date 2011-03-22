@@ -550,6 +550,12 @@ $('#form_quick_reply').submit(function() {
         window.location = response.go;
       }
       updatePosts();
+
+      // in case of quick-post ensure that 'moje teme' is checked for each user action
+      var temeSpan = $('span.ajaxcheck a:contains("Moje teme"):first').closest('span');
+      if (temeSpan.find('input:checked').length === 0){
+        temeSpan.find('a').click();
+      }
     }
   });
   $('#content_field').val('');
