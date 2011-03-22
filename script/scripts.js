@@ -76,17 +76,18 @@ $(document).ready(function(){
   });
   
   $('span.ajaxcheck').live('click', function(){
-      var url = $(this).find('a').get(0).href + '&ajax=1';
-      var checkbox = $(this).find('input').get(0);
-      var anchor = $(this).find('a').get(0);
+      var url = $(this).find('a').attr('href');      
+      var checkbox = $('a[href="'+url+'"]').closest('span').find('input');
+      var anchor = $('a[href="'+url+'"]');
+      url = url + '&ajax=1';
       
       $.getJSON(url, function(response){
         if (response.status === 'off'){
-          checkbox.checked = false;
+          checkbox.attr('checked', false);
         } else {
-          checkbox.checked = true;
+          checkbox.attr('checked', true);
         }
-        anchor.href = response.link.replace(/&amp;/g, '&') + '&ajax=1';
+        anchor.attr('href', response.link.replace(/&amp;/g, '&') + '&ajax=1');
       });      
       return false;
   });
