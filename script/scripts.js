@@ -56,6 +56,7 @@ $(document).ready(function(){
             data: 'akcija=predogledajax&'+serialized,
             success: function(data){
               $('#predogled').html(data);
+              SyntaxHighlighter.highlight();
             }
           });    
       };
@@ -101,6 +102,7 @@ $(document).ready(function(){
              div.attr('class', 'post '+response.style);
            }).fadeIn('slow', function() {
              div.attachInlineEdit();
+             SyntaxHighlighter.highlight();
            });
       });      
       return false;
@@ -282,6 +284,7 @@ function updatePosts(postid) {
           if (postid !== undefined) {
             var newPosts = $(response.newContent).replaceAll($('a[name='+postid+']').closest('.post'));
             $(newPosts).attachInlineEdit().editableImages();
+            SyntaxHighlighter.highlight();
           } else {
             /* responses are async, so we might already have :last post, so we check if current :last is
                in new response and remove it from page (since we assume new one is always better)  */
@@ -297,7 +300,9 @@ function updatePosts(postid) {
             newPosts.nextAll().andSelf().each(function(index) {
               $(this).attachInlineEdit();
               $(this).editableImages();
+              
             });
+            SyntaxHighlighter.highlight();
           }
         }
       }
