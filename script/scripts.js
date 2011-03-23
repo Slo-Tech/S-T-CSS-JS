@@ -501,19 +501,28 @@ var fn_wrapper = $('#fresh_news, #fresh_news_title, #fresh_news_all').wrapAll('<
 freshnews_divall.height(1.8 * freshnews_divall.find('li').length + 'em');
 
 var ticker = $('#fresh_news').list_ticker({'speed':6000});
+var fn_open = false;
 
 function freshnews_mouseover() {
   freshnews_divall.show();
 }
 
 function freshnews_mouseout(e) {
-  freshnews_divall.hide();
+  if (fn_open === false){
+    freshnews_divall.hide();
+  }
 }
 
 var freshnews_config = { sensitivity: 3, interval: 300, over: freshnews_mouseover, 
-                         timeout: 500, out: freshnews_mouseout };
-
+                         timeout: 1000, out: freshnews_mouseout };
 fn_wrapper.hoverIntent( freshnews_config );
+
+var freshnews_divall_config = { sensitvity: 2, interval: 300,
+                                over: function(){fn_open = true;},
+                                out: function(){fn_open = false; freshnews_divall.hide();},
+                                timeout: 200
+}
+freshnews_divall.hoverIntent( freshnews_divall_config );
 
 /* First post preview */
 function appendFirstpostInline(target, content) {
