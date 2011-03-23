@@ -262,7 +262,10 @@ $('.post').attachInlineEdit();
 /* live feed FTW */
 function updatePosts(postid) {
     var threadid = getThreadID();
-    var lastid = $('.post:last > .avatar').attr('name').substring(1);
+    var lastid = 0;
+    if ($('.post:last > .avatar').length > 0) {
+      lastid = $('.post:last > .avatar').attr('name').substring(1);
+    }
     var updateurl = '/forum' + threadid + '/check/';
 
     if (postid !== undefined) {
@@ -292,11 +295,19 @@ function updatePosts(postid) {
           
             var newContent = $(response.newContent);
             var last_post = $('.avatar:last');
-            
-            if (newContent.find('.avatar:last').attr('name') === last_post.attr('name')) {
-              last_post.closest('.post').remove();
+
+            if (last_post.length === 0) {
+              var newPosts = $('#livefeed').before(newContent);
+            } else {
+               if (newContent.find('.avatar:last').attr('name') === last_post.attr('name')) {
+                last_post.closest('.post').remove();
+              }
+              if ($('.post:last').length === 0) {
+                var newPosts = $('#livefeed').before(newContent);
+              } else {
+                var newPosts = $('.post:last').after(newContent);
+              }              
             }
-            var newPosts = $('.post:last').after(newContent);
 
             newPosts.nextAll().andSelf().each(function(index) {
               $(this).attachInlineEdit();
