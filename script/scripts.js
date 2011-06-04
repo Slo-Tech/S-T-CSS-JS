@@ -217,7 +217,7 @@ $.fn.attachInlineEdit = function() {
     var content = ans.find('.content');
 
     /* inline-uredi.click */
-    ans.find('a:contains("popravi")').click(function() {
+    ans.find('.first a:contains("popravi")').click(function() {
       $.get(rawurl, function(data) {
         var savedhtml = $(content).html();
         $(content).html('<textarea style="width:100%;" rows="5">'+data+'</textarea>').append('<div style="text-align: right;"><a href="'+urediurl+'">polni popravi</a> <input type="submit" value="shrani" class="submit send save-inlineedit" accesskey="S" name="akcija"/> <input type="submit" value="prekli&#269;i" class="submit send cancel-inlineedit" accesskey="P" name="akcija"/> </div>');
