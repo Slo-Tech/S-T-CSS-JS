@@ -576,9 +576,9 @@ $('#form_quick_reply').submit(function() {
       if (temeSpan.find('input:checked').length === 0){
         temeSpan.find('a').click();
       }
+      $('#content_field').val('');
     }
   });
-  $('#content_field').val('');
   return false;
 });
 
