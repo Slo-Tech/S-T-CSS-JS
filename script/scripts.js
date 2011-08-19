@@ -27,6 +27,19 @@ $(document).ready(function(){
     $('#predogled').show();
   });
 
+  function news_sources_buttons(viri) {
+    if (viri) {
+      $('.newsSourceList').empty();
+      $.each(viri, function(news_id, news_name) {
+        $('.newsSourceList').append('<button type="button" newsid="'+news_id+'">'+news_name+'</button>');
+      });
+    }
+  }
+
+  $('.newsSourceList button').live('click', function(){
+    $('select[name=vVir]').val($(this).attr('newsid'));
+  });
+
   $('#content_field').each(function(){
     var myForm = null;
     var url = null;
@@ -53,9 +66,15 @@ $(document).ready(function(){
             url: url,
             cache: 'false',
             type: 'POST',
+            dataType: 'json',
             data: 'akcija=predogledajax&'+serialized,
             success: function(data){
-              $('#predogled').html(data);
+              if (data.content) {
+                $('#predogled').html(data.content);
+                news_sources_buttons(data.viri);
+              } else {
+                $('#predogled').html(data);
+              }
               SyntaxHighlighter.highlight();
             }
           });    
