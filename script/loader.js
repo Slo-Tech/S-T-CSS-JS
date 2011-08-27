@@ -69,22 +69,22 @@ ScriptLoader.load = function(url, callback) {
 };
 
 
-ScriptLoader.load('https://st.fey/script/jquery.js', function() {
-	ScriptLoader.load('https://st.fey/script/js_quicktags.js');
+ScriptLoader.load('http://st.livecd.net/script/jquery.js', function() {
+	ScriptLoader.load('http://st.livecd.net/script/js_quicktags.js');
 
-	ScriptLoader.load('https://st.fey/script/jquery.prettyPhoto.js');
-	ScriptLoader.load('https://st.fey/script/jquery.editable.js');
-	ScriptLoader.load('https://st.fey/script/jquery.timers.js');
-	ScriptLoader.load('https://st.fey/script/jquery.hoverIntent.js');
-	ScriptLoader.load('https://st.fey/script/jquery.form.js');
-	ScriptLoader.load('https://st.fey/script/jquery.textarearesizer.js');
-	ScriptLoader.load('https://st.fey/script/jquery.hotkeys.js');
-	ScriptLoader.load('https://st.fey/script/jquery.autocomplete.js');
-	ScriptLoader.load('https://st.fey/script/jquery.comet.js');
-	ScriptLoader.load('https://st.fey/script/jquery.cookie.js');
-	ScriptLoader.load('https://st.fey/script/jquery.spotlight.min.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.prettyPhoto.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.editable.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.timers.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.hoverIntent.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.form.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.textarearesizer.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.hotkeys.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.autocomplete.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.comet.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.cookie.js');
+	ScriptLoader.load('http://st.livecd.net/script/jquery.spotlight.min.js');
 
-	ScriptLoader.load('https://st.fey/script/scripts.js', function(){
-		ScriptLoader.load('https://st.fey/script/legacy.js');
+	ScriptLoader.load('http://st.livecd.net/script/scripts.js', function(){
+		ScriptLoader.load('http://st.livecd.net/script/legacy.js');
 	});
 });

@@ -27,18 +27,53 @@ $(document).ready(function(){
     $('#predogled').show();
   });
 
+  function news_source_addnew() {
+    var newsrc = $(this).attr('newsrc');
+    var newform = $('<form><label for="vVirAddName">Ime vira:</label><input type="text" name="vVirAddName" class="text" value="'+newsrc+'"><label for="vVirAddURL">URL:</label><input type="text" name="vVirAddURL" class="text" value="'+newsrc+'"><input type="submit" value="prekli&#269;i" class="submit send cancel" /><input name="vVirAdd" type="submit" value="dodaj" class="submit send add" /></form>').appendTo('.newsSourceList');
+
+    newform.find('.cancel').click(function(){
+      newform.remove();
+      return false;
+    })
+
+    newform.find('.add').click(function(){
+      var serialized = newform.formSerialize() + '&vUID='+$('[name=vUID]').attr('value');
+      var url = '/script/vnosi/vnosnovic.php';
+      $.ajax({
+        type: "POST",
+        url: url,
+        dataType: 'json',
+        data: serialized + "&akcija=novvir",
+        success: function(data) { 
+          if (data.viri) {
+            $('[name=vVir]').replaceWith(data.viri);
+            newform.remove();
+          }
+        }
+      })
+      return false;
+    });
+  }
+
   function news_sources_buttons(viri) {
     if (viri) {
       $('.newsSourceList').empty();
       $.each(viri, function(news_id, news_name) {
-        $('.newsSourceList').append('<button type="button" newsid="'+news_id+'">'+news_name+'</button>');
+        var re = /\d+/;
+        if (re.test(news_id)) {
+          $('.newsSourceList').append('<button type="button" newsid="'+news_id+'" class="newsid">'+news_name+'</button>');
+        } else {
+          $('.newsSourceList').append('<button type="button" newsrc="'+news_id+'" class="newsrc">'+news_name+'</button>');
+        }
       });
     }
   }
 
-  $('.newsSourceList button').live('click', function(){
+  $('.newsSourceList button.newsid').live('click', function(){
     $('select[name=vVir]').val($(this).attr('newsid'));
   });
+
+  $('.newsSourceList button.newsrc').live('click', news_source_addnew);
 
   $('#content_field').each(function(){
     var myForm = null;
@@ -72,8 +107,6 @@ $(document).ready(function(){
               if (data.content) {
                 $('#predogled').html(data.content);
                 news_sources_buttons(data.viri);
-              } else {
-                $('#predogled').html(data);
               }
               SyntaxHighlighter.highlight();
             }
