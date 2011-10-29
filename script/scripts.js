@@ -739,41 +739,6 @@ $('input[name=q]').each(function(){
   })
 });
 
-/* Hotkeys */
-
-function redirectLink (selector) {
-    if ($('div.pp_pic_holder').is(':visible')) { return true; }
-    var url = $(selector).attr('href');
-    if (url) {
-      window.location = url;
-    }
-    return true;
-}
-
-$(document).bind('keydown', 'l', function() {redirectLink('li.next a');});
-$(document).bind('keydown', 'right', function() {redirectLink('li.next a');});
-$(document).bind('keydown', 'h', function() {redirectLink('li.prev a');});
-$(document).bind('keydown', 'left', function() {redirectLink('li.prev a');});
-
-$.extend($.expr[':'], {
-    focus: function(element) { 
-        return element === document.activeElement; 
-    }
-});
-
-function searchFocus(evt) {
-    if ($('div.pp_pic_holder').is(':visible')) { return true; }
-    if ($('input.text[name=q]').is(':focus')) {
-        return true;
-    } else {
-        $('input.text[name=q]').focus();
-        return false;
-    }
-}
-
-$(document).bind('keydown', '/', searchFocus);
-$(document).bind('keydown', 'Shift+7', searchFocus);
-
 });
 
 }( jQuery ));
