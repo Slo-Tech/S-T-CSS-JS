@@ -82,7 +82,6 @@ ScriptLoader.load('http://st.livecd.net/script/jquery.js', function() {
 	ScriptLoader.load('http://st.livecd.net/script/jquery.autocomplete.js');
 	ScriptLoader.load('http://st.livecd.net/script/jquery.comet.js');
 	ScriptLoader.load('http://st.livecd.net/script/jquery.cookie.js');
-	ScriptLoader.load('http://st.livecd.net/script/jquery.spotlight.min.js');
 
 	ScriptLoader.load('http://st.livecd.net/script/jquery.auto.js');
 
