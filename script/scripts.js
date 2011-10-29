@@ -8,10 +8,10 @@ $(document).ready(function(){
   /* right menu should be fixed */
   function init_rightmenu_fixed() {
     var viewport_h =$(window).height();
-    var aside_h = $('aside:first').height();
+    var aside_h = $('#panels aside').height();
     var fixed_h = 0;
 
-    var asides = $('aside:first > *').get();
+    var asides = $('#panels aside > *').get();
     for (var i = asides.length - 1; i >= 0; i--) {
       var aside = asides[i];
       aside_oh = $(aside).outerHeight(true);
@@ -21,7 +21,7 @@ $(document).ready(function(){
         fixed_h += aside_oh;
       };
     };
-    var trigger_fixed_height = $('.fixed:first').offset().top - parseInt($('.fixed:first').css('margin-top').slice(0,-2)) - 10;
+    var trigger_fixed_height = $('.fixed').filter(':first').offset().top - parseInt($('.fixed').filter(':first').css('margin-top').slice(0,-2)) - 10;
 
     var fixed = false;
     function check_fixed() {
@@ -488,7 +488,7 @@ if ($('.news_item').length !== 0) {
         if (lookup.find('p.read_more').length === 0){
           news_type = '/complete'
         }
-        if (lookup.get(0) === $('.exposed:first').get(0)) {
+        if (lookup.get(0) === $('.exposed').filter(':first').get(0)) {
           news_type = '/first'
         }
         var url = (("https:" === document.location.protocol) ? "https://" : "http://") + "slo-tech.com/novice/" + data.threadid + news_type;
@@ -525,7 +525,7 @@ if ($('.news_item.history').length !== 0 &&
    ) {
     var text = $('.news_item.history').attr('alt');
     $('.news_item.history').html('<div class="show-m"><input type="submit" value="'+text+'" class="submit"><img src="'+("https:" === document.location.protocol ? "https://" : "http://")+'static.slo-tech.com/stili/img/icons/user.png"></div>').click(function() {
-        var threadid = /\/t(\d*)/.exec($(this).prev().find('header a:first').attr('href'));
+        var threadid = /\/t(\d*)/.exec($(this).prev().find('header a').filter(':first').attr('href'));
         var url = $('.news_item.history').attr('rel');
 
         $.ajax({
@@ -667,7 +667,7 @@ $('#form_quick_reply').submit(function() {
       updatePosts();
 
       // in case of quick-post ensure that 'moje teme' is checked for each user action
-      var temeSpan = $('span.ajaxcheck a:contains("Moje teme"):first').closest('span');
+      var temeSpan = $('span.ajaxcheck a:contains("Moje teme")').filter(':first').closest('span');
       if (temeSpan.find('input:checked').length === 0){
         temeSpan.find('a').click();
       }
