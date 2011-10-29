@@ -4,6 +4,49 @@ $(document).ready(function(){
   $.ajaxSetup({
       cache: false
   });
+
+  /* right menu should be fixed */
+  function init_rightmenu_fixed() {
+    var viewport_h =$(window).height();
+    var aside_h = $('aside:first').height();
+    var fixed_h = 0;
+
+    var asides = $('aside:first > *').get();
+    for (var i = asides.length - 1; i >= 0; i--) {
+      var aside = asides[i];
+      aside_oh = $(aside).outerHeight(true);
+      if (aside_oh < viewport_h) {
+        $(aside).addClass('fixed');
+        viewport_h = viewport_h - aside_oh;
+        fixed_h += aside_oh;
+      };
+    };
+    var trigger_fixed_height = $('.fixed:first').offset().top - parseInt($('.fixed:first').css('margin-top').slice(0,-2)) - 10;
+
+    var fixed = false;
+    function check_fixed() {
+      if ($(window).scrollTop() > trigger_fixed_height && (fixed === false)) {
+        fixed = true;
+        var height = 10;
+        $('.fixed').each(function(){
+          $(this).css({'position':'fixed', 'top': height, 'right': '16px'});
+          height += $(this).outerHeight(true);
+        })
+
+      } else if ($(window).scrollTop() < trigger_fixed_height && (fixed === true)) {
+        $('.fixed').css({'position': ''});
+        fixed = false;
+      }
+    }
+    $(window).scroll(check_fixed);
+    check_fixed();
+  }
+  init_rightmenu_fixed();
+  
+  $(window).resize(function(){
+    $(window).unbind('scroll');
+    init_rightmenu_fixed();
+  });
   
   /* evil warning za novice */
   $('#threat_text').each(function(){

@@ -83,8 +83,6 @@ ScriptLoader.load('http://st.livecd.net/script/jquery.js', function() {
 	ScriptLoader.load('http://st.livecd.net/script/jquery.comet.js');
 	ScriptLoader.load('http://st.livecd.net/script/jquery.cookie.js');
 
-	ScriptLoader.load('http://st.livecd.net/script/jquery.auto.js');
-
 	ScriptLoader.load('http://st.livecd.net/script/scripts.js', function(){
 		ScriptLoader.load('http://st.livecd.net/script/legacy.js');
 	});
