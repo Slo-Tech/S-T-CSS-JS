@@ -158,4 +158,4 @@ $.editableFactory = {
 		}
 	}
 }
-})(jQuery);
+})($);

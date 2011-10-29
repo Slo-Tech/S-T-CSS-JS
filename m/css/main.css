@@ -1,0 +1,141 @@
+html, body{}
+html {}
+body {margin:0;font:62.5% arial,sans-serif; color:#111; font-size:62.5%;}
+html,h1,dl,dd,blockquote {margin:0;}
+header,nav,footer,section,aside,article,figure {display:block;}
+
+h1{font-size:2em;}
+article h1{margin-bottom:3px;}
+h4{font-size:1.6em;}
+h4 span{font-weight:normal;}
+
+p span.comment{background:; color:#fff;}
+
+p{font-size:1.4em; line-height:1.5em; margin:0 0 10px;}
+p:last-child{margin-bottom:0;}
+p+h3,ul+h3,table+h3 {padding-top:.5em;}
+input,select,label,textarea {font:1.2em arial,sans-serif;}
+li {margin:0;font-size:1.2em;}
+option {padding:0 3px;}
+li>li,li h3,li h4,li h5,li p,li dt,li input,li label {font-size:1em;}
+address,em {font-style:normal;}
+sub,sup {line-height:.4em;}
+time {font-size:1em;line-height:1.666em; padding-left:16px; background:url(http://static.slo-tech.com/stili/m/img/clock.png) no-repeat 1px 1px;}
+input[type='radio'],input[type='checkbox'] {margin:0;width:11px;height:11px;float:left;}
+
+ul,fieldset,menu {margin:0;padding:0;}
+img,fieldset,abbr {border:none;}
+ul {list-style:none;}
+label,input[type='submit'] {cursor:pointer;}
+
+table {margin:0 0 1.8em;border:none;border-collapse:collapse;border-spacing:0;width:100%;font-size:1.2em;}
+table thead th {background:#e3e4e8;}
+table th {text-align:left;}
+table th,table td {border-bottom:1px solid #aaaeb9;padding:7px 10px;vertical-align:top;}
+table .right {text-align:right;}
+.container .btn {width:100%;}
+
+
+.comments li:after, .bubbles:after, ul.news:after {height:0;content:'.';display:block;clear:both;visibility:hidden;}
+.ui-btn-up-a a.ui-link-inherit, .ui-btn-hover-a a.ui-link-inherit {color:#000;}
+.ui-li-heading{margin:0.65em 0 0.5em;}
+
+ul li, ol li{list-style-type:none;}
+.ui-content{}
+.support-nav li{display:inline-block; font-size:12px;}
+.support-nav li span{display:inline-block; padding:0 .5em 0 .7em; color:#999;}
+.support-nav .ui-link {color:#555;}
+.support-nav .selected a{color:#2489CE;}
+
+.support-nav{margin:0 auto; text-align:center; width:100%; float:left; padding:20px 0 0 0;}
+.version-nav{padding:10px 0 60px;}
+.version-nav li a{padding-left:20px;}
+.version-nav .mobile{background:url(http://static.slo-tech.com/stili/m/img/mobile.png) no-repeat;}
+.version-nav .desktop{background:url(http://static.slo-tech.com/stili/m/img/desktop.png) no-repeat;}
+.image{margin-bottom:20px;}
+.ui-input-search{margin:0 auto; background-color:#fff;}
+.container .ui-header{padding:8px 0 10px;}
+.ui-header .home{margin:0 0 0 10px; display:block;}
+.container .ui-header .ui-btn-left, .ui-header .ui-btn-right {top: 1.15em;}
+
+.ui-footer{text-align:center;}
+.ui-footer .ui-btn-inner{padding:;}
+.fieldcontain{text-align:center;}
+.ui-input-search{text-align:left;}
+#search{width:97%;}
+
+.comments-container {margin-top:30px;}
+.bubbles {padding-top:30px;}
+.bubbles h4 {margin:0 0 5px;}
+.bubbles .arrow{position:absolute; top:18px; left:-8px; width:8px; height:19px; background:url(http://static.slo-tech.com/stili/m/img/arrow-left.png) no-repeat;}
+.bubbles p {font-size:1.2em;}
+.bubbles .content{border:1px solid #d7d7d7; background:#fff; padding:8px 13px 10px; position:relative; -moz-border-radius:4px; -webkit-border-radius:4px;}
+
+article .info li{display:inline;}
+article .info {margin-bottom:10px;}
+h1>.info {margin-bottom:5px;}
+
+.ui-li-desc .comments, div.comments {background:url(http://static.slo-tech.com/stili/m/img/comment.png) no-repeat 6px 2px; padding:0 3px 0 23px;}
+div.comments{font-size:1.3em; padding-left:19px; background-position:0px 3px; float:right; color:#666;}
+.ui-listview .additional{color:#888;}
+
+.footer .ui-btn-icon-left{display:none;}
+
+.avatar{display:none;}
+.bubbles li, .bubbles li:nth-child(even) {padding:0; min-height:0;}
+.bubbles .arrow{display:none;}
+.bubbles li{margin-bottom:10px; position:relative;}
+.bubbles .arrow{display:none;}
+header .info {margin-bottom:12px;}
+header .info time {padding-left:18px;}
+header .info li{display:inline-block;}
+.ui-btn {font-size:1.6em; }
+.ui-header .ui-btn, .ui-footer .ui-btn, .ui-bar .ui-btn {font-size: 13px;}
+
+@media only screen {
+.container .ui-header .ui-btn-left{display:none;}
+.bubbles .avatar{position:absolute; border:1px solid #ccc; left:0; top:0;}
+.bubbles .avatar img{display:block;}
+.bubbles li:nth-child(even) .arrow{left:inherit; right:-8px; background:url(http://static.slo-tech.com/stili/m/img/arrow-right.png) no-repeat;}
+.bubbles li:nth-child(even) .avatar{left:inherit; right:0;}
+.image{width:100%; max-width:460px;}
+.fieldcontain a[role="button"]{display:none;}
+.container{position:relative;}
+#footer{position:fixed; bottom:0 !important; z-index:100;} 
+.more-comments{margin:1em 0 1em; float:left; width:100%;}
+.excerpt {display:none;}
+.options{padding-left:0; text-align:center;}
+.submit-container{padding-left:0;}
+.ui-content .related-articles{margin-top:20px;}
+.ui-li-thumb {display: none;}
+.ui-li-has-thumb .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-thumb {
+	padding-left: 0.7em !important;
+}
+}
+
+@media only screen and (min-width: 480px) and (max-width: 3000px) {
+.ui-li-thumb {display: block;}
+.ui-li-has-thumb .ui-btn-inner a.ui-link-inherit, .ui-li-static.ui-li-has-thumb {
+	padding-left: 100px !important;
+}
+.ui-li-thumb {width:100%; height:100%;}
+.avatar {display:block;}
+.bubbles .arrow{display:block;}
+.excerpt {display:inline-block;}
+.options, .submit-container{padding-left:21%; text-align:left;}
+}
+
+@media only screen and (min-width: 480px) and (max-width: 640px) {
+/* For people with small devices */
+.avatar img{width:30px; height:30px;}
+.bubbles li{padding-left:45px;}
+.bubbles li:nth-child(even) {padding-right:45px;}
+.bubbles .arrow{top:9px;}
+}
+
+@media only screen and (min-width: 640px) and (max-width: 3000px) {
+/* For people with small devices */
+.bubbles li{padding:0 0 0 68px; min-height:62px;}
+.bubbles li:nth-child(even){padding-right:68px;}
+.news .ui-li-heading {margin: 0.55em 0 0.7em;}
+}

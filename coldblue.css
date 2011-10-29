@@ -352,7 +352,7 @@ a.comments {
 	.forums th {
 		color:#4f6573; }
 
-	.forums .even {
+	.forums tr:nth-child(even) {
 		background:#bcd2e0; }
 	
 	.forums .deleted {
@@ -382,7 +382,7 @@ a.comments {
 	#content .post .user ul a {
 		color:#383838; }
 		
-	.post.even {
+	.post:nth-child(even) {
 		background:#bcd2e0; }
 
 	.post.deleted {

@@ -348,7 +348,7 @@ a.comments {
 	.forums th {
 		color:#666; }
 
-	.forums .even {
+	.forums tr:nth-child(even) {
 		background:#eaf5f6; }
 
 	.forums .mark {
@@ -381,7 +381,7 @@ a.comments {
 	#content .post .user ul a {
 		color:#666; }
 		
-	.post.even {
+	.post:nth-child(even) {
 		background:#eaf5f6; }
 
 	.post.mark {

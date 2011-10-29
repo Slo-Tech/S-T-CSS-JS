@@ -412,7 +412,7 @@ a.comments:hover
 
         #content .forums .even h3 a, #content .forums .odd h3 a { font-weight: normal; }         
 
-	.forums .even {
+	.forums tr:nth-child(even) {
 		background:#191919; border: 1px solid #353535}
         
         .forums .odd {
@@ -457,7 +457,7 @@ color: yellow; }
            color: #C0C0C0;
         }		
 
-	.post.even {
+	.post:nth-child(even) {
 		background:#191919; }
 
 	.post.deleted {

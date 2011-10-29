@@ -27,6 +27,54 @@ $(document).ready(function(){
     $('#predogled').show();
   });
 
+  function news_source_addnew() {
+    var newsrc = $(this).attr('newsrc');
+    var newform = $('<form><label for="vVirAddName">Ime vira:</label><input type="text" name="vVirAddName" class="text" value="'+newsrc+'"><label for="vVirAddURL">URL:</label><input type="text" name="vVirAddURL" class="text" value="'+newsrc+'"><input type="submit" value="prekli&#269;i" class="submit send cancel" /><input name="vVirAdd" type="submit" value="dodaj" class="submit send add" /></form>').appendTo('.newsSourceList');
+
+    newform.find('.cancel').click(function(){
+      newform.remove();
+      return false;
+    })
+
+    newform.find('.add').click(function(){
+      var serialized = newform.formSerialize() + '&vUID='+$('[name=vUID]').attr('value');
+      var url = '/script/vnosi/vnosnovic.php';
+      $.ajax({
+        type: "POST",
+        url: url,
+        dataType: 'json',
+        data: serialized + "&akcija=novvir",
+        success: function(data) { 
+          if (data.viri) {
+            $('[name=vVir]').replaceWith(data.viri);
+            newform.remove();
+          }
+        }
+      })
+      return false;
+    });
+  }
+
+  function news_sources_buttons(viri) {
+    if (viri) {
+      $('.newsSourceList').empty();
+      $.each(viri, function(news_id, news_name) {
+        var re = /\d+/;
+        if (re.test(news_id)) {
+          $('.newsSourceList').append('<button type="button" newsid="'+news_id+'" class="newsid">'+news_name+'</button>');
+        } else {
+          $('.newsSourceList').append('<button type="button" newsrc="'+news_id+'" class="newsrc">'+news_name+'</button>');
+        }
+      });
+    }
+  }
+
+  $('.newsSourceList button.newsid').live('click', function(){
+    $('select[name=vVir]').val($(this).attr('newsid'));
+  });
+
+  $('.newsSourceList button.newsrc').live('click', news_source_addnew);
+
   $('#content_field').each(function(){
     var myForm = null;
     var url = null;
@@ -45,7 +93,7 @@ $(document).ready(function(){
       myForm = $('#vnostem');
       url = '/script/forum/vnostem.php';
     }
-    
+
     if (myForm !== null) {
       var doAjaxPreview = function(){
           var serialized = myForm.formSerialize();
@@ -53,9 +101,14 @@ $(document).ready(function(){
             url: url,
             cache: 'false',
             type: 'POST',
+            dataType: 'json',
             data: 'akcija=predogledajax&'+serialized,
             success: function(data){
-              $('#predogled').html(data);
+              if (data.content) {
+                $('#predogled').html(data.content);
+                news_sources_buttons(data.viri);
+              }
+              SyntaxHighlighter.highlight();
             }
           });    
       };
@@ -69,24 +122,24 @@ $(document).ready(function(){
           setTimeout(window._watch, 3000);
       };
       
-      
-        formvalue = $('#content_field').val();
-        setTimeout(window._watch, 3000);
-    }
+      formvalue = $('#content_field').val();
+      setTimeout(window._watch, 3000);
+    };
   });
-    
+  
   $('span.ajaxcheck').live('click', function(){
-      var url = $(this).find('a').get(0).href + '&ajax=1';
-      var checkbox = $(this).find('input').get(0);
-      var anchor = $(this).find('a').get(0);
+      var url = $(this).find('a').attr('href');      
+      var checkbox = $('a[href="'+url+'"]').closest('span').find('input');
+      var anchor = $('a[href="'+url+'"]');
+      url = url + '&ajax=1';
       
       $.getJSON(url, function(response){
         if (response.status === 'off'){
-          checkbox.checked = false;
+          checkbox.attr('checked', false);
         } else {
-          checkbox.checked = true;
+          checkbox.attr('checked', true);
         }
-        anchor.href = response.link.replace(/&amp;/g, '&') + '&ajax=1';
+        anchor.attr('href', response.link.replace(/&amp;/g, '&') + '&ajax=1');
       });      
       return false;
   });
@@ -102,6 +155,7 @@ $(document).ready(function(){
              div.attr('class', 'post '+response.style);
            }).fadeIn('slow', function() {
              div.attachInlineEdit();
+             SyntaxHighlighter.highlight();
            });
       });      
       return false;
@@ -215,7 +269,7 @@ $.fn.attachInlineEdit = function() {
     var content = ans.find('.content');
 
     /* inline-uredi.click */
-    ans.find('a:contains("popravi")').click(function() {
+    ans.find('.first a:contains("popravi")').click(function() {
       $.get(rawurl, function(data) {
         var savedhtml = $(content).html();
         $(content).html('<textarea style="width:100%;" rows="5">'+data+'</textarea>').append('<div style="text-align: right;"><a href="'+urediurl+'">polni popravi</a> <input type="submit" value="shrani" class="submit send save-inlineedit" accesskey="S" name="akcija"/> <input type="submit" value="prekli&#269;i" class="submit send cancel-inlineedit" accesskey="P" name="akcija"/> </div>');
@@ -258,48 +312,168 @@ $.fn.attachInlineEdit = function() {
 $('.post').attachInlineEdit();
 
 /* live feed FTW */
-var feedUpdateInterval = 10000;
-var updatelock = false;
-
-function updatePosts() {
-  if (!updatelock) {
-    updatelock = true;
+function updatePosts(postid) {
     var threadid = getThreadID();
+    var lastid = 0;
+    if ($('.post:last > .avatar').length > 0) {
+      lastid = $('.post:last > .avatar').attr('name').substring(1);
+    }
     var updateurl = '/forum' + threadid + '/check/';
-    var lastid = $('.post:last > .avatar').attr('name').substring(1);
+
+    if (postid !== undefined) {
+      if ($('a[name='+postid+']').length > 0) {
+        updateurl = '/forum' + threadid + '/check/?count=1';
+        lastid = parseInt(data.postid.substring(1)) - 1;
+      } else {
+        return 
+      }
+    };
+    
     $.ajax({
-      type: "POST",
+      type: "POST", 
       url: updateurl,
       dataType: 'jsonp',
       data: {'lastID': lastid},
       async: true,
       success: function(response) {
-        if (typeof response.newContent !== 'undefined') {        
-          var newPosts = $('.post:last').after(response.newContent); //.hide().fadeIn('slow');
-          newPosts.nextAll().andSelf().each(function(index) {
-            $(this).attachInlineEdit();
-            $(this).editableImages();
-          });
+        if (typeof response.newContent !== 'undefined') {
+          if (postid !== undefined) {
+            var newPosts = $(response.newContent).replaceAll($('a[name='+postid+']').closest('.post'));
+            $(newPosts).attachInlineEdit().editableImages();
+            SyntaxHighlighter.highlight();
+          } else {
+            /* responses are async, so we might already have :last post, so we check if current :last is
+               in new response and remove it from page (since we assume new one is always better)  */
+          
+            var newContent = $(response.newContent);
+            var last_post = $('.avatar:last');
 
-          feedUpdateInterval = 10000;
-        } else {
-          if (feedUpdateInterval < 30000) {
-            feedUpdateInterval = feedUpdateInterval * 1.05;
+            if (last_post.length === 0) {
+              var newPosts = $('#livefeed').before(newContent);
+            } else {
+               if (newContent.find('.avatar:last').attr('name') === last_post.attr('name')) {
+                last_post.closest('.post').remove();
+              }
+              if ($('.post:last').length === 0) {
+                var newPosts = $('#livefeed').before(newContent);
+              } else {
+                var newPosts = $('.post:last').after(newContent);
+              }              
+            }
+
+            newPosts.nextAll().andSelf().each(function(index) {
+              $(this).attachInlineEdit();
+              $(this).editableImages();
+              
+            });
+            SyntaxHighlighter.highlight();
           }
         }
-
-        $('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
-            updatePosts();
-        });
-	       updatelock = false;
       }
     });
-  }
 }
 
-$('#livefeed').oneTime(feedUpdateInterval, "lfUpdate", function() {
-  updatePosts();
-});
+/* Comet */
+
+// http://push.slo-tech.com/
+//  /activity?id=novice
+//  /activity?id=forum
+//  curl http://push.slo-tech.com/publish?id=novice --data-binary 'zivjo vsi 4'
+
+
+setTimeout(function () {
+
+function catchAll(event, data, type) {
+  console.log(event, type, data);
+}
+
+
+if (getThreadID() !== false) {
+  var threadid = getThreadID();
+
+  function updateCheck(event, data, type) {
+    if (type === 'novOdgovor' || type === 'posodobiOdgovor') {
+      if (type === 'posodobiOdgovor' && 
+          '/'+data.threadid === threadid) {
+          updatePosts(data.postid);
+      } else {
+        if (data.hasOwnProperty('postid')) {
+          if ($('a[name='+data.postid+']').length === 0 && 
+                '/'+data.threadid === threadid) {
+            updatePosts();
+          }
+        };
+      }
+    }
+  }
+
+  $.comet.connect(('https:' == document.location.protocol ? 'https://' : 'http://')+'push.slo-tech.com/activity?id=forum');
+
+  // $(document).bind('posodobiOdgovor.comet', catchAll);
+  
+  $(document).bind('novOdgovor.comet', updateCheck);
+  $(document).bind('posodobiOdgovor.comet', updateCheck);
+}
+if ($('.news_item').length !== 0) {
+  if (!$.comet.fetching){
+    $.comet.connect(('https:' == document.location.protocol ? 'https://' : 'http://')+'push.slo-tech.com/activity?id=forum');
+  } 
+  
+  function updateComments(event, data, type) {
+    if (type === 'novOdgovor') {
+      var lookup = $('a.comments[href*="'+data.threadid+'"]');
+      if (lookup.length !== 0 ){
+        text = '';
+        switch (data.count % 100) {
+          case 0: text = data.count+" komentarjev"; break;
+          case 1: text = data.count+" komentar"; break;
+          case 2: text = data.count+" komentarja"; break;
+          case 3: text = data.count+" komentarji"; break;
+          case 4: text = data.count+" komentarji"; break;
+          default : text = data.count+" komentarjev"; break;
+        }
+        lookup.text(text);
+      }
+    }
+  }
+
+  function updateNews(event, data, type) {
+    if (type === 'popravekNovice') {
+      var lookup = $('h3 a[href*="'+data.threadid+'"]').closest('.news_item');
+      if (lookup.length !== 0 ){
+        var news_type = '/abstract';
+        if (lookup.find('p.read_more').length === 0){
+          news_type = '/complete'
+        }
+        if (lookup.get(0) === $('.exposed:first').get(0)) {
+          news_type = '/first'
+        }
+        var url = (("https:" === document.location.protocol) ? "https://" : "http://") + "slo-tech.com/novice/" + data.threadid + news_type;
+        var wrapper = $(lookup).find('article');
+  
+        $.ajax({url:url, cache:true, dataType: 'html', success: function(html) {
+            var from = html.indexOf('<article>');
+            var to   = html.indexOf('</article>');
+            var full = $(html.substring(from, to)).html();
+            
+            $(wrapper).html(full).find('div.history').hide();
+            $(wrapper).closest(".news_item").editableImages();
+
+            if ($(html).find('.exposed').length > 0) {
+              $(wrapper).closest(".news_item").addClass("exposed");
+            };
+            $(wrapper).find("a[rel^='lightbox']").prettyPhoto();
+          }
+        });
+      }
+    }
+  }
+  // $(document).bind('novOdgovor.comet', catchAll);
+  $(document).bind('popravekNovice.comet', updateNews);
+  $(document).bind('novOdgovor.comet', updateComments);  
+}
+
+}, 50);//end timeout
 
 /* Show more news */
 if ($('.news_item.history').length !== 0 && 
@@ -379,19 +553,28 @@ var fn_wrapper = $('#fresh_news, #fresh_news_title, #fresh_news_all').wrapAll('<
 freshnews_divall.height(1.8 * freshnews_divall.find('li').length + 'em');
 
 var ticker = $('#fresh_news').list_ticker({'speed':6000});
+var fn_open = false;
 
 function freshnews_mouseover() {
   freshnews_divall.show();
 }
 
 function freshnews_mouseout(e) {
-  freshnews_divall.hide();
+  if (fn_open === false){
+    freshnews_divall.hide();
+  }
 }
 
 var freshnews_config = { sensitivity: 3, interval: 300, over: freshnews_mouseover, 
-                         timeout: 500, out: freshnews_mouseout };
-
+                         timeout: 1000, out: freshnews_mouseout };
 fn_wrapper.hoverIntent( freshnews_config );
+
+var freshnews_divall_config = { sensitvity: 2, interval: 300,
+                                over: function(){fn_open = true;},
+                                out: function(){fn_open = false; freshnews_divall.hide();},
+                                timeout: 200
+}
+freshnews_divall.hoverIntent( freshnews_divall_config );
 
 /* First post preview */
 function appendFirstpostInline(target, content) {
@@ -438,11 +621,16 @@ $('#form_quick_reply').submit(function() {
       } else if (response.go !== 'ok') {
         window.location = response.go;
       }
-      $('#livefeed').stopTime("lfUpdate");
       updatePosts();
+
+      // in case of quick-post ensure that 'moje teme' is checked for each user action
+      var temeSpan = $('span.ajaxcheck a:contains("Moje teme"):first').closest('span');
+      if (temeSpan.find('input:checked').length === 0){
+        temeSpan.find('a').click();
+      }
+      $('#content_field').val('');
     }
   });
-  $('#content_field').val('');
   return false;
 });
 
@@ -497,7 +685,6 @@ $('div#menus ul#poll').each(function(index, poll) {
 	});
 });
 
-
 /* Autocomplete search */
 
 $('input[name=q]').each(function(){
@@ -508,7 +695,6 @@ $('input[name=q]').each(function(){
     cache: true
   })
 });
-
 
 /* Hotkeys */
 
