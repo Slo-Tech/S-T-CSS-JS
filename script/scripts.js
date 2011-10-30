@@ -227,7 +227,11 @@ $('#tool_ban').click(function() {
 /* helper functions */
 
 function getThreadID() {
-	var location = /\/t\d*/.exec(document.location.href);
+  if (document.location.pathname === '/script/forum/stream.php'){
+    return true;
+  }
+
+  var location = /\/t\d*/.exec(document.location.href);
 	if (location === null) {
 	  return false;
 	} else {
@@ -355,8 +359,11 @@ $.fn.attachInlineEdit = function() {
 $('.post').attachInlineEdit();
 
 /* live feed FTW */
-function updatePosts(postid) {
-    var threadid = getThreadID();
+function updatePosts(postid, threadid) {
+    if (threadid === undefined) {
+      threadid = getThreadID();
+    }
+
     var lastid = 0;
     if ($('.post:last > .avatar').length > 0) {
       lastid = $('.post:last > .avatar').attr('name').substring(1);
@@ -364,10 +371,11 @@ function updatePosts(postid) {
     var updateurl = '/forum' + threadid + '/check/';
 
     if (postid !== undefined) {
-      if ($('a[name='+postid+']').length > 0) {
+      if ($('a[name='+postid+']').length > 0 || getThreadID() === true) {
         updateurl = '/forum' + threadid + '/check/?count=1';
         lastid = parseInt(data.postid.substring(1)) - 1;
       } else {
+        console.log("I return", threadid);
         return 
       }
     };
@@ -380,7 +388,7 @@ function updatePosts(postid) {
       async: true,
       success: function(response) {
         if (typeof response.newContent !== 'undefined') {
-          if (postid !== undefined) {
+          if (postid !== undefined && getThreadID() !== true) {
             var newPosts = $(response.newContent).replaceAll($('a[name='+postid+']').closest('.post'));
             $(newPosts).attachInlineEdit().editableImages();
             SyntaxHighlighter.highlight();
@@ -436,9 +444,15 @@ if (getThreadID() !== false) {
 
   function updateCheck(event, data, type) {
     if (type === 'novOdgovor' || type === 'posodobiOdgovor') {
-      if (type === 'posodobiOdgovor' && 
-          '/'+data.threadid === threadid) {
-          updatePosts(data.postid);
+      if ( (type === 'posodobiOdgovor' && '/'+data.threadid === threadid) || 
+           ( threadid === true ) ) {
+
+          if (threadid === true) {
+            updatePosts(data.postid, '/'+data.threadid);
+          } else {
+            updatePosts(data.postid);
+          }
+          
       } else {
         if (data.hasOwnProperty('postid')) {
           if ($('a[name='+data.postid+']').length === 0 && 
