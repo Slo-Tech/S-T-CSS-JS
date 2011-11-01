@@ -373,21 +373,27 @@ function updatePosts(postid, threadid) {
     if (postid !== undefined) {
       if ($('a[name='+postid+']').length > 0 || getThreadID() === true) {
         updateurl = '/forum' + threadid + '/check/?count=1';
-        lastid = parseInt(data.postid.substring(1)) - 1;
+        lastid = parseInt(postid.substring(1)) - 1;
       } else {
-        console.log("I return", threadid);
         return 
       }
-    };
-    
+    }
+
+    if (getThreadID() === true && postid === undefined){
+      var data = {'firstPost': true}
+    } else {
+      var data = {'lastID': lastid}
+    }
+
     $.ajax({
       type: "POST", 
       url: updateurl,
       dataType: 'jsonp',
-      data: {'lastID': lastid},
+      data: data,
       async: true,
       success: function(response) {
         if (typeof response.newContent !== 'undefined') {
+          // getThreadID() === true for stream.php
           if (postid !== undefined && getThreadID() !== true) {
             var newPosts = $(response.newContent).replaceAll($('a[name='+postid+']').closest('.post'));
             $(newPosts).attachInlineEdit().editableImages();
@@ -395,8 +401,12 @@ function updatePosts(postid, threadid) {
           } else {
             /* responses are async, so we might already have :last post, so we check if current :last is
                in new response and remove it from page (since we assume new one is always better)  */
-          
+            
             var newContent = $(response.newContent);
+            /* firstPost doesn't return outer envelope */
+            if (data['firstPost'] === true){
+              newContent = $('<div class="post">').append(newContent);
+            }
             var last_post = $('.avatar:last');
 
             if (last_post.length === 0) {
@@ -418,6 +428,12 @@ function updatePosts(postid, threadid) {
               
             });
             SyntaxHighlighter.highlight();
+
+            if (getThreadID() === true) {
+              $('html,body').animate({
+                  scrollTop: $(newPosts).position().top
+              }, 2000);
+            }
           }
         }
       }
