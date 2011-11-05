@@ -112,11 +112,11 @@ $(document).ready(function(){
     }
   }
 
-  $('.newsSourceList button.newsid').live('click', function(){
+  $(document).on('click', '.newsSourceList button.newsid', function(){
     $('select[name=vVir]').val($(this).attr('newsid'));
   });
 
-  $('.newsSourceList button.newsrc').live('click', news_source_addnew);
+  $(document).on('click', '.newsSourceList button.newsrc', news_source_addnew);
 
   $('#content_field').each(function(){
     var myForm = null;
@@ -170,7 +170,7 @@ $(document).ready(function(){
     };
   });
   
-  $('span.ajaxcheck').live('click', function(){
+  $(document).on('click', 'span.ajaxcheck', function(){
       var url = $(this).find('a').attr('href');      
       var checkbox = $('a[href="'+url+'"]').closest('span').find('input');
       var anchor = $('a[href="'+url+'"]');
@@ -188,7 +188,7 @@ $(document).ready(function(){
   });
   
   
-  $('a.ajaxlink').live('click', function(event){
+  $(document).on('click', 'a.ajaxlink', function(event){
       var url = $(this).get(0).href + '&ajax=1';
       var div = $(this).parents('div.post');
       
@@ -482,10 +482,10 @@ if (getThreadID() !== false) {
 
   $.comet.connect(('https:' == document.location.protocol ? 'https://' : 'http://')+'push.slo-tech.com/activity?id=forum');
 
-  // $(document).bind('posodobiOdgovor.comet', catchAll);
+  // $(document).on('posodobiOdgovor.comet', catchAll);
   
-  $(document).bind('novOdgovor.comet', updateCheck);
-  $(document).bind('posodobiOdgovor.comet', updateCheck);
+  $(document).on('novOdgovor.comet', updateCheck);
+  $(document).on('posodobiOdgovor.comet', updateCheck);
 }
 if ($('.news_item').length !== 0) {
   if (!$.comet.fetching){
@@ -541,9 +541,9 @@ if ($('.news_item').length !== 0) {
       }
     }
   }
-  // $(document).bind('novOdgovor.comet', catchAll);
-  $(document).bind('popravekNovice.comet', updateNews);
-  $(document).bind('novOdgovor.comet', updateComments);  
+  // $(document).on('novOdgovor.comet', catchAll);
+  $(document).on('popravekNovice.comet', updateNews);
+  $(document).on('novOdgovor.comet', updateComments);  
 }
 
 }, 50);//end timeout
@@ -780,10 +780,10 @@ function redirectLink (selector) {
     return true;
 }
 
-$(document).bind('keydown', 'l', function() {redirectLink('li.next a');});
-$(document).bind('keydown', 'right', function() {redirectLink('li.next a');});
-$(document).bind('keydown', 'h', function() {redirectLink('li.prev a');});
-$(document).bind('keydown', 'left', function() {redirectLink('li.prev a');});
+$(document).on('keydown', null, 'l', function() {redirectLink('li.next a');});
+$(document).on('keydown', null, 'right', function() {redirectLink('li.next a');});
+$(document).on('keydown', null, 'h', function() {redirectLink('li.prev a');});
+$(document).on('keydown', null, 'left', function() {redirectLink('li.prev a');});
 
 $.extend($.expr[':'], {
     focus: function(element) { 
@@ -801,8 +801,8 @@ function searchFocus(evt) {
     }
 }
 
-$(document).bind('keydown', '/', searchFocus);
-$(document).bind('keydown', 'Shift+7', searchFocus);
+$(document).on('keydown', null, '/', searchFocus);
+$(document).on('keydown', null, 'Shift+7', searchFocus);
 
 });
 
