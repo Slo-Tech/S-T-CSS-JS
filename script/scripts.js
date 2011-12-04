@@ -98,6 +98,8 @@ $(document).ready(function(){
     });
   }
 
+  /* news source buttons */
+
   function news_sources_buttons(viri) {
     if (viri) {
       $('.newsSourceList').empty();
@@ -117,6 +119,10 @@ $(document).ready(function(){
   });
 
   $(document).on('click', '.newsSourceList button.newsrc', news_source_addnew);
+
+  /* stari vnosi v novicah */
+
+  /* ajax forms */
 
   $('#content_field').each(function(){
     var myForm = null;
@@ -237,6 +243,44 @@ function getThreadID() {
 	} else {
 	  return location[0];
 	}
+}
+
+/* mali oglasi */
+
+if ($('#iskalnik-malioglasi')) {
+  var iskalnik = $('#iskalnik-malioglasi').html('<p><label for="amount">Prikazuj oglase s ceno med:</label><input type="text" id="amount" style="border:0; color:#f6931f; font-weight:bold;" /></p><div id="slider-range"></div>');
+
+  var values = [];
+  $('tr@[data-cena]').not('.deleted').map(function(i,d){
+    var val = parseInt($(d).attr('data-cena'));
+    values.push(val);
+  });
+  
+  var max = Math.max.apply(Math, values);
+  var min = Math.min.apply(Math, values);
+  
+  $( "#amount" ).val(min+" \u20AC - " + max + " \u20AC");
+  iskalnik.find( "#slider-range" ).slider({
+      range: true,
+      min: min,
+      max: max,
+      values: [min, max],
+      slide: function( event, ui ) {
+        min = ui.values[0];
+        max = ui.values[1]
+
+        $( "#amount" ).val(min+" \u20AC - " + max + " \u20AC");
+        $('tr@[data-cena]').not('.deleted').map(function(){
+          var _this = $(this);
+          var cena = parseInt(_this.attr('data-cena'));
+          
+          if (cena >= min && cena <= max) { _this.show() }
+          else { _this.hide(); }
+        }).show();
+
+      }
+  });
+
 }
 
 /* smart editing of titles */
@@ -459,6 +503,7 @@ if (getThreadID() !== false) {
   var threadid = getThreadID();
 
   function updateCheck(event, data, type) {
+    console.log(event, data, type);
     if (type === 'novOdgovor' || type === 'posodobiOdgovor') {
       if ( (type === 'posodobiOdgovor' && '/'+data.threadid === threadid) || 
            ( threadid === true ) ) {
