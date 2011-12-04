@@ -252,7 +252,7 @@ if ($('#iskalnik-malioglasi')) {
 
   var values = [];
   $('tr@[data-cena]').not('.deleted').map(function(i,d){
-    var val = parseInt($(d).attr('data-cena'));
+    var val = parseInt(d.getAttribute('data-cena'));
     values.push(val);
   });
   
@@ -268,20 +268,15 @@ if ($('#iskalnik-malioglasi')) {
       slide: function( event, ui ) {
         min = ui.values[0];
         max = ui.values[1]
-
         $( "#amount" ).val(min+" \u20AC - " + max + " \u20AC");
       },
       change: function ( event, ui ) {
-        
         $('tr@[data-cena]').map(function(){
-          var _this = $(this);
-          var cena = parseInt(_this.attr('data-cena'));
-          
-          if (cena >= min && cena <= max) {            
-            _this.css({'display':'table-row'});
-          }
-          else { 
-            _this.css({'display':'none'});
+          var cena = parseInt(this.getAttribute('data-cena'));
+          if (cena >= min && cena <= max) {
+            this.style.display = '';
+          } else {
+            this.style.display = 'none';
           }
         });
       }
