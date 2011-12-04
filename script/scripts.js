@@ -270,14 +270,20 @@ if ($('#iskalnik-malioglasi')) {
         max = ui.values[1]
 
         $( "#amount" ).val(min+" \u20AC - " + max + " \u20AC");
-        $('tr@[data-cena]').not('.deleted').map(function(){
+      },
+      change: function ( event, ui ) {
+        
+        $('tr@[data-cena]').map(function(){
           var _this = $(this);
           var cena = parseInt(_this.attr('data-cena'));
           
-          if (cena >= min && cena <= max) { _this.show() }
-          else { _this.hide(); }
-        }).show();
-
+          if (cena >= min && cena <= max) {            
+            _this.css({'display':'table-row'});
+          }
+          else { 
+            _this.css({'display':'none'});
+          }
+        });
       }
   });
 
